@@ -4,9 +4,12 @@ on:
     - cron: '0 8 * * *' # 2–3 AM Central
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
 jobs:
   backup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       PG_MAJOR: '18'
     steps:
@@ -22,12 +25,14 @@ jobs:
         run: |
           FILE="ccm-lab-$(date -u +%Y-%m-%dT%H%MZ).dump"
           "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_dump" "$DATABASE_URI" -Fc --no-owner -f "$FILE"
+          test -s "$FILE"
           echo "FILE=$FILE" >> "$GITHUB_ENV"
       - name: Upload to R2
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: auto
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
         run: |
           aws s3 cp "$FILE" "s3://ccm-lab-backups/db/$FILE" \
             --endpoint-url "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
