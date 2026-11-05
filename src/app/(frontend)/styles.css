@@ -196,7 +196,7 @@ body {
 .page {
   max-width: 64rem;
   margin: 0 auto;
-  padding: 1.5rem 1rem;
+  padding: 1.5rem 1rem 6.5rem; /* clears the fixed player bar (body height:100% swallows body padding) */
 }
 .narrow {
   max-width: 28rem;
