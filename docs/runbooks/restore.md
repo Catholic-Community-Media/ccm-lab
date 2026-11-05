@@ -10,4 +10,4 @@ Prerequisites: local `pg_restore` must be version 18 or newer (the dump is made 
 
 Note: GitHub disables scheduled workflows after 60 days without repo activity. If backups stop appearing, re-enable the `db-backup` workflow in the repo's Actions tab.
 
-Restore test: pending (run after the GitHub secrets are set).
+Restore test: PASSED 2026-11-05 — db/ccm-lab-2026-11-05T2142Z.dump restored into a temporary Neon branch with pg_restore 18.6 (Homebrew `libpq`, /opt/homebrew/opt/libpq/bin): 15 tables, 1 admin user, 2 markets, 3 migrations. Branch deleted afterwards.
