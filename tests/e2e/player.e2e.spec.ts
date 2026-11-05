@@ -79,3 +79,24 @@ test('switching market while paused resumes the newly selected market', async ({
   await page.getByRole('button', { name: 'Play live radio' }).click()
   await expect(page.locator('.player__title')).toHaveText(`Live · ${nolaName}`)
 })
+
+test('switching market while playing with a failing stream still reconnects', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Play live radio' }).click()
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
+  await expect.poll(() => page.locator('audio[data-ccm-audio]').evaluate((a: HTMLAudioElement) => !a.paused && a.currentTime > 0.3)).toBe(true)
+  // From now on every stream request fails.
+  await page.unroute((url) => url.hostname !== 'localhost' && /\.(mp3|aac)$|stream|icecast|streamguys/i.test(url.href)).catch(() => {})
+  await page.route((url) => url.hostname !== 'localhost' && /\.(mp3|aac)$|stream|icecast|streamguys/i.test(url.href), (route) => route.abort())
+  await page.getByLabel('Market').selectOption('nola')
+  await expect(page.getByText('Reconnecting…')).toBeVisible({ timeout: 5_000 })
+})
+
+test('a stream connection that hangs without data is treated as a failure', async ({ page }) => {
+  // Never fulfill or abort: the request hangs open.
+  await page.route((url) => url.hostname !== 'localhost' && /streamguys/i.test(url.href), () => {})
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Play live radio' }).click()
+  await expect(page.getByText('Connecting…')).toBeVisible()
+  await expect(page.getByText('Reconnecting…')).toBeVisible({ timeout: 12_000 })
+})

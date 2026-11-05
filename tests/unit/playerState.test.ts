@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GIVE_UP_MS, initialState, reducer, retryDelayMs, type Source } from '@/player/state'
+import { GIVE_UP_MS, STALL_TIMEOUT_MS, initialState, reducer, retryDelayMs, type Source } from '@/player/state'
 
 const live: Source = { kind: 'live', marketKey: 'br', url: 'https://s/br', title: 'Live · Baton Rouge', backupPlayerUrl: 'https://p' }
 const ep: Source = { kind: 'episode', id: 'e1', url: 'https://a/e1.mp3', title: 'Wake Up! 11/5' }
@@ -52,6 +52,21 @@ describe('player reducer', () => {
     expect(reducer(playing, { type: 'ended', now: 0 }).status).toBe('reconnecting')
     const epPlaying = reducer(reducer(initialState, { type: 'load', source: ep }), { type: 'playing' })
     expect(reducer(epPlaying, { type: 'ended', now: 0 }).status).toBe('paused')
+  })
+
+  it('a stall timeout error while loading moves to reconnecting', () => {
+    expect(reducer(loaded, { type: 'error', now: 0 })).toMatchObject({ status: 'reconnecting', attempt: 1 })
+    expect(STALL_TIMEOUT_MS).toBe(10_000)
+  })
+
+  it('waiting from playing goes back to loading', () => {
+    expect(reducer(playing, { type: 'waiting' }).status).toBe('loading')
+  })
+
+  it('load after failed resets attempt and failingSince', () => {
+    const failed = reducer(reducer(playing, { type: 'error', now: 0 }), { type: 'error', now: GIVE_UP_MS })
+    expect(failed.status).toBe('failed')
+    expect(reducer(failed, { type: 'load', source: live })).toMatchObject({ status: 'loading', attempt: 0, failingSince: null })
   })
 
   it('stop clears everything', () => {

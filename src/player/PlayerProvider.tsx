@@ -1,7 +1,7 @@
 'use client'
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { pickMarket, type Market, type MarketKey } from '@/lib/markets'
-import { initialState, reducer, retryDelayMs, type EpisodeSource, type LiveSource, type PlayerState, type Source } from './state'
+import { STALL_TIMEOUT_MS, initialState, reducer, retryDelayMs, type EpisodeSource, type LiveSource, type PlayerState, type Source } from './state'
 import { readStoredMarket, storeMarket } from './storage'
 import { useMediaSession } from './useMediaSession'
 
@@ -40,6 +40,21 @@ export function PlayerProvider({ markets, children }: { markets: Market[]; child
   const [marketKey, setMarketKey] = useState<MarketKey | null>(null)
   const market = pickMarket(markets, marketKey)
 
+  const stallTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const clearStall = useCallback(() => {
+    if (stallTimer.current) clearTimeout(stallTimer.current)
+    stallTimer.current = null
+  }, [])
+  // A connection that stays open without delivering data never raises `error`; this turns it into one.
+  const armStall = useCallback(() => {
+    clearStall()
+    stallTimer.current = setTimeout(() => {
+      stallTimer.current = null
+      dispatch({ type: 'error', now: Date.now() })
+    }, STALL_TIMEOUT_MS)
+  }, [clearStall])
+  useEffect(() => clearStall, [clearStall])
+
   useEffect(() => {
     setMarketKey(readStoredMarket())
     const a = audioRef.current
@@ -56,10 +71,11 @@ export function PlayerProvider({ markets, children }: { markets: Market[]; child
     const a = audioRef.current
     if (!a) return
     dispatch({ type: 'load', source })
+    armStall()
     a.src = source.url
     a.load()
     a.play().catch(onPlayRejected)
-  }, [onPlayRejected])
+  }, [onPlayRejected, armStall])
 
   const playLive = useCallback(() => {
     if (market) start(liveSourceFor(market))
@@ -82,8 +98,9 @@ export function PlayerProvider({ markets, children }: { markets: Market[]; child
     const a = audioRef.current
     if (!a || !isActive) return
     a.pause()
+    clearStall()
     dispatch({ type: 'userPause' })
-  }, [isActive])
+  }, [isActive, clearStall])
 
   const toggle = useCallback(() => (isActive ? pause() : resume()), [isActive, pause, resume])
 
@@ -94,8 +111,9 @@ export function PlayerProvider({ markets, children }: { markets: Market[]; child
       a.removeAttribute('src')
       a.load()
     }
+    clearStall()
     dispatch({ type: 'stop' })
-  }, [])
+  }, [clearStall])
 
   const setMarket = useCallback(
     (key: MarketKey) => {
@@ -113,18 +131,20 @@ export function PlayerProvider({ markets, children }: { markets: Market[]; child
     const a = audioRef.current
     if (!a) return
     const handlers: Array<[string, () => void]> = [
-      ['playing', () => dispatch({ type: 'playing' })],
-      ['waiting', () => dispatch({ type: 'waiting' })],
+      ['playing', () => { clearStall(); dispatch({ type: 'playing' }) }],
+      ['waiting', () => { dispatch({ type: 'waiting' }); if (!stallTimer.current) armStall() }],
+      ['stalled', () => { if (!a.paused && !stallTimer.current) armStall() }],
       ['pause', () => {
         // `pause` fires before `ended`; let `ended` drive that case.
-        if (!a.ended) dispatch({ type: 'mediaPaused' })
+        // load() on a playing element queues a stale `pause`; ignore it if play() already resumed.
+        if (!a.ended && a.paused) dispatch({ type: 'mediaPaused' })
       }],
       ['error', () => dispatch({ type: 'error', now: Date.now() })],
       ['ended', () => dispatch({ type: 'ended', now: Date.now() })],
     ]
     handlers.forEach(([t, fn]) => a.addEventListener(t, fn))
     return () => handlers.forEach(([t, fn]) => a.removeEventListener(t, fn))
-  }, [])
+  }, [armStall, clearStall])
 
   // Reconnect loop
   useEffect(() => {
@@ -133,12 +153,18 @@ export function PlayerProvider({ markets, children }: { markets: Market[]; child
     const timer = setTimeout(() => {
       const a = audioRef.current
       if (!a) return
+      armStall()
       a.src = src.url
       a.load()
       a.play().catch(onPlayRejected)
     }, retryDelayMs(state.attempt))
     return () => clearTimeout(timer)
-  }, [state.status, state.attempt, state.source, onPlayRejected])
+  }, [state.status, state.attempt, state.source, onPlayRejected, armStall])
+
+  // Anything but `loading` cancels the watchdog (a reconnect retry re-arms its own).
+  useEffect(() => {
+    if (state.status !== 'loading') clearStall()
+  }, [state.status, clearStall])
 
   useMediaSession(state, { resume, pause, stop })
 
