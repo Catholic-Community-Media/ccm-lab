@@ -8,6 +8,9 @@ import { s3Storage } from '@payloadcms/storage-s3'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { LabStatus } from './globals/LabStatus'
+import { heartbeatTask } from './jobs/heartbeat'
+import { cronEndpoint } from './endpoints/cron'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -20,6 +23,9 @@ export default buildConfig({
     },
   },
   collections: [Users, Media],
+  globals: [LabStatus],
+  jobs: { tasks: [heartbeatTask] },
+  endpoints: [cronEndpoint],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
