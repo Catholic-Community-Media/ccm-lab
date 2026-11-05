@@ -24,3 +24,5 @@ Only the shared player URL found; per-market selection is by `activeStreamIndex`
 New Orleans mount `/neworleans` unreachable. Need Christopher/StreamGuys to confirm the mount name and that the NOLA encoder is live.
 
 **Open item:** NOLA mount `/neworleans` returns 404 and is absent from Icecast status as of 2026-11-05 13:54 CT; awaiting Christopher/StreamGuys confirmation. Seeded from StreamGuys' own config.json per controller ruling. `/overflow` exists (128k stereo) but isn't a market.
+
+**Testing override:** NOLA market temporarily points at the /batonrouge mount for testing (user decision 2026-11-05; /neworleans feed unreliable — restore when fixed).
