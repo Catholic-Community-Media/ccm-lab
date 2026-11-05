@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { isEditorOrAdmin } from '@/access/roles'
+import { validateUniqueMarketKeys } from '@/lib/markets'
 import { safeRevalidate } from '@/lib/revalidate'
 
 export const Markets: GlobalConfig = {
@@ -13,6 +14,7 @@ export const Markets: GlobalConfig = {
       type: 'array',
       minRows: 1,
       maxRows: 2,
+      validate: (value: unknown) => validateUniqueMarketKeys(value),
       admin: { initCollapsed: false },
       fields: [
         { name: 'key', type: 'select', required: true, options: [{ label: 'Baton Rouge', value: 'br' }, { label: 'New Orleans', value: 'nola' }] },

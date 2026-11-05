@@ -21,6 +21,11 @@ type RawItem = {
   pledgePhone?: string | null
 }
 
+export function validateUniqueMarketKeys(items: unknown): true | string {
+  const keys = (Array.isArray(items) ? items : []).map((i) => (i as { key?: string | null } | null)?.key).filter(Boolean)
+  return new Set(keys).size === keys.length ? true : 'Each market may appear only once (duplicate key).'
+}
+
 const isKey = (k: unknown): k is MarketKey => k === 'br' || k === 'nola'
 
 export function normalizeMarkets(raw: unknown): Market[] {

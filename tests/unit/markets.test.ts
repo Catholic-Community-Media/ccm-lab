@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeMarkets, pickMarket, type Market } from '@/lib/markets'
+import { normalizeMarkets, pickMarket, validateUniqueMarketKeys, type Market } from '@/lib/markets'
 
 const br: Market = { key: 'br', name: 'Baton Rouge', frequencies: ['WPYR 1380 AM'], streamUrl: 'https://s/br', backupPlayerUrl: 'https://p/br' }
 const nola: Market = { key: 'nola', name: 'New Orleans', frequencies: ['690 AM'], streamUrl: 'https://s/nola', backupPlayerUrl: 'https://p/nola' }
@@ -30,5 +30,16 @@ describe('pickMarket', () => {
   })
   it('returns undefined when no markets are configured', () => {
     expect(pickMarket([], 'br')).toBeUndefined()
+  })
+})
+
+describe('validateUniqueMarketKeys', () => {
+  it('accepts unique keys and empty values', () => {
+    expect(validateUniqueMarketKeys([{ key: 'br' }, { key: 'nola' }])).toBe(true)
+    expect(validateUniqueMarketKeys(undefined)).toBe(true)
+    expect(validateUniqueMarketKeys(null)).toBe(true)
+  })
+  it('rejects duplicate keys', () => {
+    expect(validateUniqueMarketKeys([{ key: 'br' }, { key: 'br' }])).toMatch(/duplicate/i)
   })
 })
