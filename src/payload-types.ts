@@ -91,9 +91,11 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     labStatus: LabStatus;
+    markets: Market;
   };
   globalsSelect: {
     labStatus: LabStatusSelect<false> | LabStatusSelect<true>;
+    markets: MarketsSelect<false> | MarketsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -471,11 +473,63 @@ export interface LabStatus {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "markets".
+ */
+export interface Market {
+  id: number;
+  items?:
+    | {
+        key: 'br' | 'nola';
+        name: string;
+        frequencies?:
+          | {
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        streamUrl: string;
+        metadataUrl?: string | null;
+        backupPlayerUrl: string;
+        pledgePhone?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "labStatus_select".
  */
 export interface LabStatusSelect<T extends boolean = true> {
   message?: T;
   lastHeartbeat?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "markets_select".
+ */
+export interface MarketsSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        key?: T;
+        name?: T;
+        frequencies?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
+        streamUrl?: T;
+        metadataUrl?: T;
+        backupPlayerUrl?: T;
+        pledgePhone?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

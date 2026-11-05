@@ -11,6 +11,7 @@ import { resendAdapter } from '@payloadcms/email-resend'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { LabStatus } from './globals/LabStatus'
+import { Markets } from './globals/Markets'
 import { heartbeatTask } from './jobs/heartbeat'
 import { cronEndpoint } from './endpoints/cron'
 
@@ -25,7 +26,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media],
-  globals: [LabStatus],
+  globals: [LabStatus, Markets],
   jobs: { tasks: [heartbeatTask] },
   endpoints: [cronEndpoint],
   email: process.env.RESEND_API_KEY
