@@ -3,6 +3,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
+import { migrations } from './migrations'
 import sharp from 'sharp'
 import { s3Storage } from '@payloadcms/storage-s3'
 
@@ -35,6 +36,7 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },
+    prodMigrations: migrations,
   }),
   sharp,
   plugins: [
