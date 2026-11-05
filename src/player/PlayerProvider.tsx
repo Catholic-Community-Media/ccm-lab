@@ -40,6 +40,9 @@ export function PlayerProvider({ markets, children }: { markets: Market[]; child
   const [marketKey, setMarketKey] = useState<MarketKey | null>(null)
   const market = pickMarket(markets, marketKey)
 
+  const statusRef = useRef(state.status)
+  statusRef.current = state.status
+
   const stallTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const clearStall = useCallback(() => {
     if (stallTimer.current) clearTimeout(stallTimer.current)
@@ -50,6 +53,8 @@ export function PlayerProvider({ markets, children }: { markets: Market[]; child
     clearStall()
     stallTimer.current = setTimeout(() => {
       stallTimer.current = null
+      // Only a connection still waiting for data is a failure; a healthy stream may have recovered.
+      if (statusRef.current !== 'loading' && statusRef.current !== 'reconnecting') return
       dispatch({ type: 'error', now: Date.now() })
     }, STALL_TIMEOUT_MS)
   }, [clearStall])
@@ -132,15 +137,17 @@ export function PlayerProvider({ markets, children }: { markets: Market[]; child
     if (!a) return
     const handlers: Array<[string, () => void]> = [
       ['playing', () => { clearStall(); dispatch({ type: 'playing' }) }],
-      ['waiting', () => { dispatch({ type: 'waiting' }); if (!stallTimer.current) armStall() }],
-      ['stalled', () => { if (!a.paused && !stallTimer.current) armStall() }],
+      // `waiting` itself moves playing -> loading, so it may arm from `playing` (the ref lags the dispatch).
+      ['waiting', () => { dispatch({ type: 'waiting' }); if (!stallTimer.current && !a.paused) armStall() }],
+      // iOS Safari fires spurious `stalled` during healthy playback: only watch a connection still waiting for data.
+      ['stalled', () => { if (!a.paused && !stallTimer.current && (statusRef.current === 'loading' || statusRef.current === 'reconnecting')) armStall() }],
       ['pause', () => {
         // `pause` fires before `ended`; let `ended` drive that case.
         // load() on a playing element queues a stale `pause`; ignore it if play() already resumed.
         if (!a.ended && a.paused) dispatch({ type: 'mediaPaused' })
       }],
-      ['error', () => dispatch({ type: 'error', now: Date.now() })],
-      ['ended', () => dispatch({ type: 'ended', now: Date.now() })],
+      ['error', () => { clearStall(); dispatch({ type: 'error', now: Date.now() }) }],
+      ['ended', () => { clearStall(); dispatch({ type: 'ended', now: Date.now() }) }],
     ]
     handlers.forEach(([t, fn]) => a.addEventListener(t, fn))
     return () => handlers.forEach(([t, fn]) => a.removeEventListener(t, fn))

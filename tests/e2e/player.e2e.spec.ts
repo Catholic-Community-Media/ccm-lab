@@ -100,3 +100,28 @@ test('a stream connection that hangs without data is treated as a failure', asyn
   await expect(page.getByText('Connecting…')).toBeVisible()
   await expect(page.getByText('Reconnecting…')).toBeVisible({ timeout: 12_000 })
 })
+
+test('a spurious stalled event during healthy playback does not force a reconnect', async ({ page }) => {
+  await page.route((url) => url.hostname !== 'localhost' && /streamguys/i.test(url.href), (route) =>
+    route.fulfill({ path: 'public/test-fixtures/tone.mp3', contentType: 'audio/mpeg' }),
+  )
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Play live radio' }).click()
+  const audio = page.locator('audio[data-ccm-audio]')
+  await expect.poll(() => audio.evaluate((a: HTMLAudioElement) => !a.paused && a.currentTime > 0.5)).toBe(true)
+  // Record every attempt value the bar shows, so a brief reconnect that recovers cannot slip past.
+  await page.evaluate(() => {
+    const bar = document.querySelector('section.player')!
+    const seen: string[] = [bar.getAttribute('data-attempt')!]
+    ;(window as unknown as { __attempts: string[] }).__attempts = seen
+    new MutationObserver(() => seen.push(bar.getAttribute('data-attempt')!)).observe(bar, { attributes: true, attributeFilter: ['data-attempt'] })
+  })
+  // iOS Safari fires these during healthy playback.
+  await audio.evaluate((a: HTMLAudioElement) => a.dispatchEvent(new Event('stalled')))
+  await page.waitForTimeout(11_000)
+  const bar = page.locator('section.player')
+  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible()
+  await expect(page.getByText('Reconnecting…')).toHaveCount(0)
+  await expect(bar).toHaveAttribute('data-attempt', '0')
+  expect(await page.evaluate(() => (window as unknown as { __attempts: string[] }).__attempts)).toEqual(['0'])
+})

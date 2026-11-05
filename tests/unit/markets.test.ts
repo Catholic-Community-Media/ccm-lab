@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeMarkets, pickMarket, validateUniqueMarketKeys, type Market } from '@/lib/markets'
+import { normalizeMarkets, pickMarket, validateMarketItems, validateUniqueMarketKeys, type Market } from '@/lib/markets'
 
 const br: Market = { key: 'br', name: 'Baton Rouge', frequencies: ['WPYR 1380 AM'], streamUrl: 'https://s/br', backupPlayerUrl: 'https://p/br' }
 const nola: Market = { key: 'nola', name: 'New Orleans', frequencies: ['690 AM'], streamUrl: 'https://s/nola', backupPlayerUrl: 'https://p/nola' }
@@ -41,5 +41,21 @@ describe('validateUniqueMarketKeys', () => {
   })
   it('rejects duplicate keys', () => {
     expect(validateUniqueMarketKeys([{ key: 'br' }, { key: 'br' }])).toMatch(/duplicate/i)
+  })
+})
+
+describe('validateMarketItems', () => {
+  const opts = { minRows: 1, maxRows: 2 }
+  it('accepts one or two unique markets', () => {
+    expect(validateMarketItems([{ key: 'br' }], opts)).toBe(true)
+    expect(validateMarketItems([{ key: 'br' }, { key: 'nola' }], opts)).toBe(true)
+  })
+  it('rejects an empty or missing list (minRows)', () => {
+    expect(validateMarketItems([], opts)).toMatch(/at least 1/i)
+    expect(validateMarketItems(undefined, opts)).toMatch(/at least 1/i)
+  })
+  it('rejects too many rows and duplicate keys', () => {
+    expect(validateMarketItems([{ key: 'br' }, { key: 'nola' }, { key: 'br' }], opts)).toMatch(/no more than 2/i)
+    expect(validateMarketItems([{ key: 'br' }, { key: 'br' }], opts)).toMatch(/duplicate/i)
   })
 })

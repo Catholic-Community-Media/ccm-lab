@@ -21,6 +21,14 @@ type RawItem = {
   pledgePhone?: string | null
 }
 
+// A custom `validate` replaces Payload's default array validator, so row bounds are re-checked here.
+export function validateMarketItems(items: unknown, opts: { minRows?: number; maxRows?: number } = {}): true | string {
+  const n = Array.isArray(items) ? items.length : 0
+  if (opts.minRows !== undefined && n < opts.minRows) return `At least ${opts.minRows} market${opts.minRows === 1 ? ' is' : 's are'} required.`
+  if (opts.maxRows !== undefined && n > opts.maxRows) return `No more than ${opts.maxRows} markets are allowed.`
+  return validateUniqueMarketKeys(items)
+}
+
 export function validateUniqueMarketKeys(items: unknown): true | string {
   const keys = (Array.isArray(items) ? items : []).map((i) => (i as { key?: string | null } | null)?.key).filter(Boolean)
   return new Set(keys).size === keys.length ? true : 'Each market may appear only once (duplicate key).'

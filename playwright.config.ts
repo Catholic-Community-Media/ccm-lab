@@ -8,7 +8,10 @@ export default defineConfig({
   testMatch: '**/*.e2e.spec.ts',
   timeout: 60_000,
   use: { baseURL: remote ?? 'http://localhost:3000' },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+  ],
   webServer: remote
     ? undefined
     : {
