@@ -9,8 +9,10 @@ export default defineConfig({
   timeout: 60_000,
   use: { baseURL: remote ?? 'http://localhost:3000' },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: '**/*.mobile.e2e.spec.ts' },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] }, testIgnore: '**/*.mobile.e2e.spec.ts' },
+    { name: 'mobile-chrome', use: { ...devices['Pixel 7'] }, testMatch: '**/*.mobile.e2e.spec.ts' },
+    { name: 'mobile-safari', use: { ...devices['iPhone 14'] }, testMatch: '**/*.mobile.e2e.spec.ts' },
   ],
   webServer: remote
     ? undefined
