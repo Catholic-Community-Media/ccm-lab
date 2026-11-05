@@ -22,6 +22,15 @@ export function isExemptPath(pathname: string): boolean {
 }
 
 export function safeNextPath(raw: string | null | undefined): string {
-  if (!raw || !raw.startsWith('/') || raw.startsWith('//') || raw.startsWith('/\\')) return '/'
-  return raw
+  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return '/'
+  // The WHATWG URL parser strips tab/LF/CR and treats \ as /, so reject both up front.
+  if (/[\u0000-\u001f\u007f\\]/.test(raw)) return '/'
+  try {
+    const u = new URL(raw, 'http://lab.invalid')
+    if (u.origin !== 'http://lab.invalid') return '/'
+    const out = u.pathname + u.search + u.hash
+    return out.startsWith('//') ? '/' : out
+  } catch {
+    return '/'
+  }
 }

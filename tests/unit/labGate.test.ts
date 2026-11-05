@@ -42,4 +42,21 @@ describe('safeNextPath', () => {
     expect(safeNextPath('/\\evil.example')).toBe('/')
     expect(safeNextPath(null)).toBe('/')
   })
+  it('rejects embedded control characters that the URL parser would strip', () => {
+    expect(safeNextPath('/\t/evil.com')).toBe('/')
+    expect(safeNextPath('/\n/evil.com')).toBe('/')
+    expect(safeNextPath('/\r/evil.com')).toBe('/')
+  })
+  it('rejects backslashes anywhere', () => {
+    expect(safeNextPath('/\\evil.com')).toBe('/')
+    expect(safeNextPath('/a\\b')).toBe('/')
+  })
+  it('keeps percent-encoded slashes same-origin', () => {
+    const out = safeNextPath('/%2F/evil.com')
+    expect(out.startsWith('/')).toBe(true)
+    expect(out.startsWith('//')).toBe(false)
+  })
+  it('round-trips query and hash', () => {
+    expect(safeNextPath('/listen?x=1#top')).toBe('/listen?x=1#top')
+  })
 })
