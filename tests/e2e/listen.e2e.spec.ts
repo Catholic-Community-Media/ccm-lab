@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test'
-import { LAB_COOKIE, passcodeToken } from '../../src/lib/labGate'
+import { addLabCookie } from './helpers'
 
 test.beforeEach(async ({ context, baseURL }) => {
-  await context.addCookies([{ name: LAB_COOKIE, value: await passcodeToken('test-pass'), url: baseURL! }])
+  await addLabCookie(context, baseURL)
 })
 
 test('listen page lists frequencies and offers a basic player', async ({ page }) => {

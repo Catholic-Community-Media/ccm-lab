@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test'
-import { LAB_COOKIE, passcodeToken } from '../../src/lib/labGate'
+import { addLabCookie } from './helpers'
 
 test.beforeEach(async ({ context, page, baseURL }) => {
-  await context.addCookies([{ name: LAB_COOKIE, value: await passcodeToken('test-pass'), url: baseURL! }])
+  await addLabCookie(context, baseURL)
   // Serve the local tone for whatever stream URL the Markets global points at.
   await page.route(
     (url) => url.hostname !== 'localhost' && /\.(mp3|aac)$|stream|icecast|streamguys/i.test(url.href),

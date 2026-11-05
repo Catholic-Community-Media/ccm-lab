@@ -13,7 +13,7 @@ export default async function LabAccessPage({
       <h1>Catholic Community Media — Lab</h1>
       <p>This is a preview site for staff. Enter the lab passcode to continue.</p>
       {error ? (
-        <p role="alert" className="error">
+        <p role="alert" data-testid="lab-access-error" className="error">
           That passcode didn&apos;t match. Please try again.
         </p>
       ) : null}

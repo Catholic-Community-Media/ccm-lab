@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test'
 
-const PASSCODE = process.env.PLAYWRIGHT_BASE_URL ? (process.env.LAB_PASSCODE ?? '') : 'test-pass'
+import { labPasscode } from './helpers'
+
+const PASSCODE = labPasscode()
 
 test('visitors must enter the passcode, then return to their page', async ({ page }) => {
   await page.goto('/')
@@ -8,7 +10,7 @@ test('visitors must enter the passcode, then return to their page', async ({ pag
 
   await page.getByLabel('Lab passcode').fill('wrong')
   await page.getByRole('button', { name: 'Enter' }).click()
-  await expect(page.getByRole('alert')).toContainText("didn't match")
+  await expect(page.getByTestId('lab-access-error')).toContainText("didn't match")
 
   await page.getByLabel('Lab passcode').fill(`  ${PASSCODE.toUpperCase()} `)
   await page.getByRole('button', { name: 'Enter' }).click()
