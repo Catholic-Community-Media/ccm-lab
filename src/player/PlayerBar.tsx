@@ -19,7 +19,7 @@ export function PlayerBar({ variant = 'bar' }: { variant?: 'bar' | 'full' }) {
   }
 
   return (
-    <section className={`player player--${variant}`} aria-label="Radio player">
+    <section className={`player player--${variant}`} aria-label="Radio player" data-attempt={state.attempt}>
       <button type="button" className="player__toggle" onClick={toggle} aria-label={label}>
         <span aria-hidden="true">{active ? '❚❚' : '▶'}</span>
       </button>
