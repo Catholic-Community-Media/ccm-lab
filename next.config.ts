@@ -7,6 +7,8 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
+  // Dev-only: the "N" badge sits over the fixed player bar and blocks clicks (incl. e2e).
+  devIndicators: false,
   images: {
     localPatterns: [
       {

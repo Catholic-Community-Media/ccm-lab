@@ -162,3 +162,61 @@ svg {
     }
   }
 }
+
+/* Neutral lab tokens (Plan 2 replaces these) */
+:root {
+  --bg: #fafaf8;
+  --fg: #1d1d1f;
+  --muted: #5f5f66;
+  --accent: #9b2335;
+  --accent-fg: #fff;
+  --donate: #f2c14e;
+  --donate-fg: #1d1d1f;
+  --player-bg: #2b2b2e;
+  --player-fg: #fff;
+  --focus: #f2c14e;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141416;
+    --fg: #f2f2f2;
+    --muted: #a3a3aa;
+  }
+}
+html {
+  background: var(--bg);
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, sans-serif;
+  padding-bottom: 5.5rem;
+}
+.page {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+.narrow {
+  max-width: 28rem;
+}
+.muted {
+  color: var(--muted);
+}
+.error {
+  color: #b00020;
+}
+.site-header nav {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

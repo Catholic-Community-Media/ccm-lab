@@ -1,18 +1,27 @@
-import React from 'react'
 import './styles.css'
+import '@/player/player.css'
+import { getMarkets } from '@/lib/getMarkets'
+import { PlayerProvider } from '@/player/PlayerProvider'
+import { PlayerBar } from '@/player/PlayerBar'
+import { SiteHeader } from './SiteHeader'
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+  title: 'Catholic Community Media — Lab',
+  robots: { index: false, follow: false },
 }
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  const { children } = props
+export const revalidate = 3600
 
+export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
+  const markets = await getMarkets()
   return (
     <html lang="en">
       <body>
-        <main>{children}</main>
+        <PlayerProvider markets={markets}>
+          <SiteHeader />
+          {children}
+          <PlayerBar />
+        </PlayerProvider>
       </body>
     </html>
   )
