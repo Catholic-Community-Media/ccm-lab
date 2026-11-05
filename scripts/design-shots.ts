@@ -12,7 +12,10 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1440, 900]
   const page = await context.newPage()
   for (const state of ['normal', 'pledge'] as const) {
     await page.goto(`${base}/design/${id}/index.html`)
-    await page.evaluate((s) => document.documentElement.setAttribute('data-state', s), state)
+    if (state !== 'normal') {
+      await page.locator('[data-ui="state-switch"]').getByRole('button', { name: 'Pledge drive', exact: true }).click()
+      await page.waitForSelector(`html[data-state="${state}"]`)
+    }
     await page.screenshot({ path: `docs/design/${id}-${name}-${state}.png`, fullPage: true })
   }
   await context.close()

@@ -32,7 +32,7 @@ Each direction is a static mockup at `public/design/<id>/index.html`. Screenshot
 | --shadow-1 | 0 0.75rem 2rem rgb(0 0 0 / 0.45) |
 | --header-h / --player-h | 4rem / 4.5rem |
 
-(Extra, decorative: `--color-navy` #3954a5 and `--switch-h` 2.75rem for the mockup-state bar.)
+(Mockup-local, set on the `html` selector and not in `:root`: `--color-navy` #3954a5 and `--switch-h` 2.75rem for the mockup-state bar.)
 
 **Where each brand color is used**
 

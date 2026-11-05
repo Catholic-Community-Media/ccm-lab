@@ -29,7 +29,6 @@
   --color-player-bg: #0b0d12;
   --color-player-text: #f3f4f6;
   --color-player-focus: #6cc7fe;
-  --color-navy: #3954a5;
   --font-heading: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
   --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --radius-sm: 0.375rem;
@@ -50,6 +49,10 @@
   --shadow-1: 0 0.75rem 2rem rgb(0 0 0 / 0.45);
   --header-h: 4rem;
   --player-h: 4.5rem;
+}
+/* Mockup-local tokens (not part of the contract) */
+html {
+  --color-navy: #3954a5;
   --switch-h: 2.75rem;
 }
 
@@ -192,13 +195,18 @@ main > section { min-width: 0; }
 .next-seg b { font-family: var(--font-heading); font-size: var(--step-1); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 800; }
 .compact-play { display: none; }
 
-html[data-state="live"] .video-card { display: block; }
+html[data-state="live"] .video-card, html[data-state="pledge"] .video-card { display: block; }
+.pledge-sched { display: none; }
+html[data-state="pledge"] .pledge-sched { display: block; }
+.pledge-sched h3 { font-size: var(--step-1); text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-give); margin-bottom: var(--space-2); }
+.pledge-sched li { display: grid; grid-template-columns: 5rem 1fr; gap: var(--space-3); padding: var(--space-2) 0; border-top: 1px solid var(--color-border); }
+.pledge-sched time { font-family: var(--font-heading); font-weight: 800; letter-spacing: 0.04em; color: var(--color-accent); font-size: var(--step-1); }
+.pledge-sched li.is-next time { color: var(--color-give); }
 html[data-state="pledge"] .live-card { padding: var(--space-4); gap: var(--space-3); }
 html[data-state="pledge"] .live-title, html[data-state="pledge"] .live-sub, html[data-state="pledge"] .play-big { display: none; }
 html[data-state="pledge"] .next-seg { display: flex; }
 html[data-state="pledge"] .compact-play { display: inline-flex; }
 html[data-state="pledge"] .live-top .market-chip { display: none; }
-html[data-state="pledge"] [data-section="live"] .live-card { height: auto; }
 .next-seg b { white-space: nowrap; }
 
 /* Give */
@@ -450,6 +458,15 @@ html[data-state="pledge"] .give-panel { border-top-width: 6px; }
         <span><span data-play-label>Play live radio</span><small data-market-line>Baton Rouge &middot; WPYR 1380 AM</small></span>
         <span class="meter" aria-hidden="true" style="margin-left:auto"><i></i><i></i><i></i><i></i><i></i></span>
       </button>
+
+      <div class="pledge-sched">
+        <h3>Live pledge segments today</h3>
+        <ul>
+          <li><time>7:00</time><span>Wake Up! pledge kickoff with Fr. Sample <span class="tag">Sample</span></span></li>
+          <li><time>12:00</time><span>Noon matching-gift hour <span class="tag">Sample</span></span></li>
+          <li class="is-next"><time>4:00</time><span>Next live segment: listener stories <span class="tag">Sample</span></span></li>
+        </ul>
+      </div>
 
       <div class="next-seg">
         <span class="lamp" style="color:var(--color-text-muted)"><i aria-hidden="true" style="background:var(--color-text-muted);animation:none;box-shadow:none"></i>Next live segment</span>
