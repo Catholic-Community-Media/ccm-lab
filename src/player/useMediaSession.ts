@@ -10,7 +10,7 @@ export function useMediaSession(state: PlayerState, handlers: { resume(): void; 
       title: src.title,
       artist: src.kind === 'episode' ? (src.showName ?? 'Catholic Community Radio') : 'Catholic Community Radio',
       album: 'Catholic Community Media',
-      artwork: [{ src: (src.kind === 'episode' && src.artwork) || '/icons/ccm-512.png', sizes: '512x512', type: 'image/png' }],
+      artwork: [{ src: (src.kind === 'episode' && src.artwork) || '/icons/ccr-logo-blue-bg-512x512.png', sizes: '512x512', type: 'image/png' }],
     })
     navigator.mediaSession.playbackState = state.status === 'playing' || state.status === 'loading' || state.status === 'reconnecting' ? 'playing' : 'paused'
   }, [state.source, state.status])
