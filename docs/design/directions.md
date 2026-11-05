@@ -1,0 +1,46 @@
+# Visual directions
+
+Each direction is a static mockup at `public/design/<id>/index.html`. Screenshots live beside this file in `docs/design/`.
+
+## A. Studio (dark broadcast)
+
+**Intent:** a broadcast studio at night. The live signal is the hero: big confident type, an on-air red LIVE lamp that pulses (not under reduced motion), sky blue as the "signal" accent. Gold is reserved for giving.
+
+**Fonts:** Barlow Condensed 700/800 for headings (uppercase, slight letter-spacing, like on-air lower thirds); Barlow 400/500/600 for body. One Google Fonts link.
+
+**Tokens**
+
+| Token | Value |
+|---|---|
+| --color-bg | #0e1014 |
+| --color-surface | #181b22 |
+| --color-surface-2 | #22262f |
+| --color-text | #f3f4f6 |
+| --color-text-muted | #a7adb8 |
+| --color-border | #2e333d |
+| --color-brand / -contrast | #d13239 / #ffffff |
+| --color-accent / -contrast | #6cc7fe / #0b1220 |
+| --color-live / -contrast | #d13239 / #ffffff |
+| --color-give / -contrast | #ffbd00 / #0b1220 |
+| --color-success / -contrast | #74aa21 / #0b1220 |
+| --color-focus | #6cc7fe |
+| --color-player-bg / -text / -focus | #0b0d12 / #f3f4f6 / #6cc7fe |
+| --font-heading / --font-body | Barlow Condensed stack / Barlow stack |
+| --radius-sm / -md / -lg | 0.375rem / 0.75rem / 1.25rem |
+| --space-1..6 | 0.25 / 0.5 / 0.75 / 1 / 1.5 / 2.5 rem |
+| --step--1..4 | clamp() scale, step-0 minimum 1rem |
+| --shadow-1 | 0 0.75rem 2rem rgb(0 0 0 / 0.45) |
+| --header-h / --player-h | 4rem / 4.5rem |
+
+(Extra, decorative: `--color-navy` #3954a5 and `--switch-h` 2.75rem for the mockup-state bar.)
+
+**Where each brand color is used**
+
+- **Red #d13239:** LIVE lamp, the large Play live radio button, "On now" card edge, heart bullets in the donor ticker, the video LIVE tag.
+- **Sky #6cc7fe:** the "signal" accent: eyebrows, links, active nav underline, segmented control, episode Play buttons and progress lines, player-bar play button, focus ring.
+- **Gold #ffbd00:** giving only: Give buttons, amount presets, give panel top rule, pledge thermometer, matching-gift countdown, phone number.
+- **Navy #3954a5:** decoration only: a gradient wash behind the live card, poster and player artwork. No text sits directly on pure navy.
+- **Green #74aa21:** only the small "On air now" chips.
+- **Blue #299cd9:** not used.
+
+Screenshots: `a-studio-phone-normal.png`, `a-studio-phone-pledge.png`, `a-studio-desktop-normal.png`, `a-studio-desktop-pledge.png`.
