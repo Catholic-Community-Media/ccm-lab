@@ -13,6 +13,7 @@ import { Media } from './collections/Media'
 import { LabStatus } from './globals/LabStatus'
 import { Markets } from './globals/Markets'
 import { heartbeatTask } from './jobs/heartbeat'
+import { hasRole } from './access/roles'
 import { cronEndpoint } from './endpoints/cron'
 
 const filename = fileURLToPath(import.meta.url)
@@ -27,7 +28,7 @@ export default buildConfig({
   },
   collections: [Users, Media],
   globals: [LabStatus, Markets],
-  jobs: { tasks: [heartbeatTask] },
+  jobs: { tasks: [heartbeatTask], access: { run: ({ req }) => hasRole(req.user, 'admin'), queue: ({ req }) => hasRole(req.user, 'admin'), cancel: ({ req }) => hasRole(req.user, 'admin') } },
   endpoints: [cronEndpoint],
   email: process.env.RESEND_API_KEY
     ? resendAdapter({
