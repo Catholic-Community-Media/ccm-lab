@@ -85,3 +85,44 @@ Screenshots: `a-studio-phone-normal.png`, `a-studio-phone-pledge.png`, `a-studio
 - **Blue #299cd9:** not used.
 
 Screenshots: `b-parish-phone-normal.png`, `b-parish-phone-pledge.png`, `b-parish-desktop-normal.png`, `b-parish-desktop-pledge.png`.
+
+## C. Signal (bright, app-like)
+
+**Intent:** feels like a great listening app, built from the blue logo. Rounded cards, bold color blocks, a navy player bar, and the blue-background logo as player artwork. Optimistic and clear. In the Pledge drive state the live column carries the Wake Up! poster and a "Live pledge segments today" list (Sample) so it balances the tall give panel.
+
+**Fonts:** Barlow 800 for headings (sentence case); Nunito Sans (400/600) for body, a Google stand-in for the Avenir feel CCM has used. One Google Fonts link.
+
+**Tokens**
+
+| Token | Value |
+|---|---|
+| --color-bg | #f5f9ff |
+| --color-surface | #ffffff |
+| --color-surface-2 | #e6f4ff |
+| --color-text | #0b1220 |
+| --color-text-muted | #4a5a73 |
+| --color-border | #d3e2f3 |
+| --color-brand / -contrast | #3954a5 / #ffffff |
+| --color-accent / -contrast | #299cd9 / #0b1220 |
+| --color-live / -contrast | #d13239 / #ffffff |
+| --color-give / -contrast | #ffbd00 / #0b1220 |
+| --color-success / -contrast | #74aa21 / #0b1220 |
+| --color-focus | #d13239 |
+| --color-player-bg / -text / -focus | #3954a5 / #ffffff / #ffbd00 |
+| --font-heading / --font-body | Barlow stack / Nunito Sans stack |
+| --radius-sm / -md / -lg | 0.375rem / 0.75rem / 1.25rem |
+| --space-1..6 | 0.25 / 0.5 / 0.75 / 1 / 1.5 / 2.5 rem |
+| --step--1..4 | clamp() scale, step-0 minimum 1rem |
+| --shadow-1 | 0 0.375rem 1.25rem rgb(57 84 165 / 0.14) |
+| --header-h / --player-h | 4rem / 4.5rem |
+
+**Where each brand color is used**
+
+- **Navy #3954a5:** the main color block: live card (navy-to-blue gradient, text kept over the navy end), player bar, menu and player sheets, About block, Listen player, footer, date tiles, challenge banner, thermometer fill, links, selected segment.
+- **Blue #299cd9:** the gradient end of the live card only (no text over it); the contract accent token.
+- **Red #d13239:** the large Play live radio button, "Live now" chips, On now edge, Watch quick action, focus ring on light surfaces, heart bullets.
+- **Gold #ffbd00:** giving only: Give buttons, amount presets, give panel header, thermometer knob, countdown chip, player-bar focus ring.
+- **Sky #6cc7fe:** chips and tags (Sample, market chip), episode Play buttons, player-bar play button, state switch, with ink text.
+- **Green #74aa21:** only the small "On air now" chips.
+
+Screenshots: `c-signal-phone-normal.png`, `c-signal-phone-pledge.png`, `c-signal-desktop-normal.png`, `c-signal-desktop-pledge.png`.

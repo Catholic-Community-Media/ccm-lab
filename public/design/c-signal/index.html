@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en" data-state="normal">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light">
+<title>CCM Signal direction</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@700;800&family=Nunito+Sans:wght@400;600&display=swap">
+<style>
+:root {
+  --color-bg: #f5f9ff;
+  --color-surface: #ffffff;
+  --color-surface-2: #e6f4ff;
+  --color-text: #0b1220;
+  --color-text-muted: #4a5a73;
+  --color-border: #d3e2f3;
+  --color-brand: #3954a5;
+  --color-brand-contrast: #ffffff;
+  --color-accent: #299cd9;
+  --color-accent-contrast: #0b1220;
+  --color-live: #d13239;
+  --color-live-contrast: #ffffff;
+  --color-give: #ffbd00;
+  --color-give-contrast: #0b1220;
+  --color-success: #74aa21;
+  --color-success-contrast: #0b1220;
+  --color-focus: #d13239;
+  --color-player-bg: #3954a5;
+  --color-player-text: #ffffff;
+  --color-player-focus: #ffbd00;
+  --font-heading: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Nunito Sans", "Avenir Next", Avenir, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2.5rem;
+  --step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --step-1: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --step-2: clamp(1.625rem, 1.4rem + 1vw, 2.125rem);
+  --step-3: clamp(2.25rem, 1.8rem + 2vw, 3.25rem);
+  --step-4: clamp(3.25rem, 2.4rem + 4vw, 5.5rem);
+  --shadow-1: 0 0.375rem 1.25rem rgb(57 84 165 / 0.14);
+  --header-h: 4rem;
+  --player-h: 4.5rem;
+}
+/* Mockup-local helpers (not part of the contract) */
+html {
+  --c-sky: #6cc7fe;
+  --switch-h: 2.75rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  padding-top: var(--switch-h);
+  padding-bottom: calc(var(--player-h) + env(safe-area-inset-bottom, 0px));
+}
+h1, h2, h3 { font-family: var(--font-heading); font-weight: 800; line-height: 1.05; margin: 0; letter-spacing: -0.005em; }
+h2 { font-size: var(--step-2); }
+h3 { font-size: var(--step-1); }
+p { margin: 0; }
+ul { list-style: none; margin: 0; padding: 0; }
+img { display: block; max-width: 100%; }
+a { color: var(--color-brand); }
+button { font: inherit; color: inherit; cursor: pointer; }
+.icon, svg.ico-play, svg.ico-pause { width: 1.25rem; height: 1.25rem; fill: currentColor; flex: none; }
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+.on-navy :focus-visible, [data-ui="player-bar"] :focus-visible, .sheet :focus-visible, .site-footer :focus-visible { outline-color: var(--color-player-focus); }
+.tag {
+  display: inline-block; background: var(--c-sky); color: var(--color-text);
+  font-size: 0.75rem; font-weight: 600; line-height: 1.4; padding: 0 var(--space-2);
+  border-radius: 999px; vertical-align: middle; white-space: nowrap;
+}
+.eyebrow { font-family: var(--font-heading); font-weight: 700; font-size: var(--step--1); letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-brand); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: 2.75rem; padding: 0 var(--space-4);
+  border: 2px solid transparent; border-radius: 999px;
+  font-family: var(--font-heading); font-weight: 800; font-size: var(--step-0); line-height: 1; text-decoration: none;
+  background: var(--color-surface-2); color: var(--color-text);
+}
+.btn-give { background: var(--color-give); color: var(--color-give-contrast); }
+.btn-signal { background: var(--c-sky); color: var(--color-text); }
+.btn-brand { background: var(--color-brand); color: var(--color-brand-contrast); }
+.btn-ghost { background: var(--color-surface); color: var(--color-brand); border-color: var(--color-brand); }
+.btn-sm { min-height: 2.75rem; padding: 0 var(--space-3); }
+.btn-block { display: flex; width: 100%; }
+.btn:active { transform: scale(0.98); }
+
+/* Review-aid state switch */
+[data-ui="state-switch"] {
+  position: fixed; inset: 0 0 auto 0; z-index: 90; height: var(--switch-h);
+  display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+  background: var(--color-text); color: var(--color-surface);
+}
+[data-ui="state-switch"] .lbl { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+[data-ui="state-switch"] .seg { display: flex; }
+[data-ui="state-switch"] button {
+  min-height: 2.75rem; min-width: 2.75rem; padding: 0 var(--space-3); border: 0; background: transparent; color: var(--color-surface);
+  font-size: 0.8125rem; font-weight: 600;
+}
+[data-ui="state-switch"] button[aria-pressed="true"] { background: var(--c-sky); color: var(--color-text); }
+[data-ui="state-switch"] :focus-visible { outline-color: var(--color-player-focus); outline-offset: -3px; }
+
+/* Header */
+.site-header {
+  position: sticky; top: var(--switch-h); z-index: 50; height: var(--header-h);
+  display: flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-4);
+  background: var(--color-surface); border-bottom: 1px solid var(--color-border);
+}
+.brand { display: flex; align-items: center; gap: var(--space-2); text-decoration: none; color: var(--color-brand); margin-right: auto; min-height: 2.75rem; }
+.brand img { width: 2.75rem; height: 2.75rem; object-fit: contain; }
+.brand span { display: none; font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); line-height: 1; }
+.primary-nav { display: none; }
+.menu-btn {
+  width: 2.75rem; height: 2.75rem; display: grid; place-items: center; border-radius: 999px;
+  background: var(--color-brand); color: var(--color-brand-contrast); border: 0;
+}
+
+/* Layout */
+main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); max-width: 75rem; margin: 0 auto; padding: var(--space-4); }
+main > section { min-width: 0; scroll-margin-top: calc(var(--switch-h) + var(--header-h) + var(--space-3)); }
+.panel { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); padding: var(--space-5); height: 100%; }
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-3); }
+.more-link { display: inline-flex; align-items: center; min-height: 2.75rem; font-weight: 600; color: var(--color-brand); }
+
+/* Live card */
+.wrap-live { display: flex; flex-direction: column; gap: var(--space-4); height: 100%; }
+.live-card {
+  position: relative; overflow: hidden; border-radius: var(--radius-lg); box-shadow: var(--shadow-1);
+  padding: var(--space-5); color: var(--color-brand-contrast);
+  background: linear-gradient(170deg, var(--color-brand) 0%, var(--color-brand) 66%, var(--color-accent) 100%);
+  display: flex; flex-direction: column; gap: var(--space-4);
+}
+.live-card h1 { font-size: var(--step-3); color: var(--color-brand-contrast); }
+.live-card h1 em { display: block; font-style: normal; color: var(--color-brand-contrast); text-decoration: underline; text-decoration-color: var(--c-sky); text-decoration-thickness: 0.2em; text-underline-offset: 0.15em; }
+.live-sub { font-size: var(--step-0); }
+.live-art { display: none; }
+.live-top { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.chip {
+  display: inline-flex; align-items: center; gap: var(--space-2); min-height: 2rem; padding: 0 var(--space-3);
+  border-radius: 999px; font-family: var(--font-heading); font-weight: 700; font-size: var(--step--1);
+  letter-spacing: 0.04em; text-transform: uppercase; border: 0;
+}
+.chip i { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: currentColor; flex: none; }
+.chip-live { background: var(--color-live); color: var(--color-live-contrast); }
+.chip-live i { animation: blink 1.6s ease-in-out infinite; }
+.chip-air { background: var(--color-success); color: var(--color-success-contrast); }
+.market-chip { background: var(--c-sky); color: var(--color-text); min-height: 2.75rem; padding: 0 var(--space-3); text-transform: none; letter-spacing: 0; font-size: var(--step-0); }
+@keyframes blink { 50% { opacity: 0.25; } }
+
+.play-big {
+  display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 5rem; padding: var(--space-3) var(--space-4) var(--space-3) var(--space-3);
+  background: var(--color-live); color: var(--color-live-contrast); border: 0; border-radius: var(--radius-lg); text-align: left;
+  box-shadow: var(--shadow-1);
+}
+.play-big .disc { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--color-surface); color: var(--color-live); display: grid; place-items: center; flex: none; }
+.play-big .disc svg { width: 1.75rem; height: 1.75rem; }
+.play-big b { display: block; font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); line-height: 1.1; }
+.play-big small { display: block; font-size: var(--step--1); font-weight: 600; }
+.ico-pause, .is-playing > .disc .ico-play, .is-playing > .ico-play { display: none; }
+.is-playing > .disc .ico-pause, .is-playing > .ico-pause { display: block; }
+.play-big.is-playing .disc { animation: pulse 2s ease-out infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgb(255 255 255 / 0.6); } 100% { box-shadow: 0 0 0 1rem rgb(255 255 255 / 0); } }
+
+/* Video poster */
+.video-card, .pledge-poster { display: none; }
+html[data-state="live"] .video-card { display: block; }
+html[data-state="pledge"] .pledge-poster { display: block; }
+.poster {
+  position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--radius-md);
+  background: var(--color-brand); color: var(--color-brand-contrast);
+  display: flex; flex-direction: column; justify-content: flex-end; padding: var(--space-3);
+}
+.poster img.art { position: absolute; right: 0; top: 0; height: 100%; width: auto; aspect-ratio: 1; object-fit: cover; }
+.poster .chip { position: absolute; top: var(--space-3); left: var(--space-3); }
+.poster .lower { position: relative; max-width: 58%; }
+.poster .lower strong { display: block; font-family: var(--font-heading); font-weight: 800; font-size: var(--step-2); line-height: 1; }
+.poster .lower span { font-size: var(--step--1); font-weight: 600; }
+.play-ov {
+  position: absolute; right: var(--space-3); bottom: var(--space-3); width: 3.5rem; height: 3.5rem; border-radius: 50%; border: 0;
+  background: var(--color-live); color: var(--color-live-contrast); display: grid; place-items: center; box-shadow: var(--shadow-1);
+}
+.play-ov svg { width: 1.75rem; height: 1.75rem; fill: currentColor; margin-left: 0.125rem; }
+
+/* Pledge-only live pieces */
+.next-seg, .pledge-extra { display: none; }
+.next-seg { align-items: center; gap: var(--space-3); }
+.next-seg b { font-family: var(--font-heading); font-weight: 800; font-size: var(--step-2); line-height: 1; }
+.next-seg .lbl { font-weight: 600; font-size: var(--step--1); display: block; }
+html[data-state="pledge"] .live-card { background: linear-gradient(110deg, var(--color-brand) 0%, var(--color-brand) 68%, var(--color-accent) 100%); }
+html[data-state="pledge"] .live-card h1, html[data-state="pledge"] .live-sub, html[data-state="pledge"] .play-big-live { display: none; }
+html[data-state="pledge"] .next-seg { display: flex; }
+html[data-state="pledge"] .pledge-extra { display: flex; flex-direction: column; gap: var(--space-4); flex: 1; }
+.seg-list { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); padding: var(--space-4) var(--space-5); flex: 1; }
+.seg-list h3 { font-size: var(--step-1); margin-bottom: var(--space-2); }
+.seg-list li, .today li { display: flex; gap: var(--space-3); align-items: baseline; padding: var(--space-2) 0; border-top: 1px solid var(--color-border); }
+.seg-list li:first-of-type, .today li:first-child { border-top: 0; }
+.seg-list time, .today time { font-family: var(--font-heading); font-weight: 800; color: var(--color-brand); min-width: 3.25rem; font-size: var(--step-1); line-height: 1.2; }
+.seg-list li.is-next { background: var(--color-surface-2); margin: 0 calc(var(--space-3) * -1); padding-inline: var(--space-3); border-radius: var(--radius-md); border-top-color: transparent; }
+
+/* Give */
+.give-panel { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); overflow: hidden; height: 100%; display: flex; flex-direction: column; }
+.give-head { background: var(--color-give); color: var(--color-give-contrast); padding: var(--space-4) var(--space-5); display: flex; align-items: center; gap: var(--space-3); }
+.give-head svg { width: 2rem; height: 2rem; fill: currentColor; flex: none; }
+.give-head p { font-weight: 600; }
+.give-body { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); flex: 1; }
+.give-normal { display: flex; flex-direction: column; gap: var(--space-4); flex: 1; justify-content: center; gap: var(--space-5); }
+.amounts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); }
+.amounts .btn { background: var(--color-give); color: var(--color-give-contrast); font-size: var(--step-1); padding: 0; min-height: 3.5rem; border-radius: var(--radius-md); }
+.amounts .btn.other { background: var(--color-surface); color: var(--color-brand); border-color: var(--color-brand); font-size: var(--step-0); }
+.give-opts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.give-opts .btn { background: var(--color-surface); color: var(--color-brand); border-color: var(--color-brand); font-size: var(--step--1); }
+.call-line {
+  display: flex; align-items: center; gap: var(--space-3); min-height: 3.5rem; padding: var(--space-2) var(--space-4);
+  background: var(--color-surface-2); border-radius: var(--radius-md); color: var(--color-text); text-decoration: none; font-weight: 600;
+}
+.call-line svg { color: var(--color-brand); width: 1.5rem; height: 1.5rem; }
+.call-line .num { font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); color: var(--color-brand); white-space: nowrap; }
+.pledge-panel { display: none; flex-direction: column; gap: var(--space-4); flex: 1; }
+html[data-state="pledge"] .give-normal { display: none; }
+html[data-state="pledge"] .pledge-panel { display: flex; }
+.thermo-amt { font-family: var(--font-heading); font-weight: 800; font-size: var(--step-3); line-height: 1; color: var(--color-brand); }
+.thermo-amt span { font-size: var(--step-1); color: var(--color-text-muted); }
+.thermo { position: relative; height: 1.25rem; margin: var(--space-3) 0 var(--space-2); background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: 999px; }
+.thermo i { position: absolute; inset: 0 auto 0 0; width: 46.125%; background: var(--color-brand); border-radius: 999px; }
+.thermo i::after { content: ""; position: absolute; right: -0.25rem; top: 50%; width: 1.75rem; height: 1.75rem; transform: translateY(-50%); background: var(--color-give); border: 3px solid var(--color-brand); border-radius: 50%; }
+.thermo-meta { display: flex; justify-content: space-between; font-size: var(--step--1); font-weight: 600; color: var(--color-text-muted); }
+.challenge { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-4); background: var(--color-brand); color: var(--color-brand-contrast); border-radius: var(--radius-md); }
+.challenge p { font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); line-height: 1.1; }
+.clock-box { text-align: center; flex: none; }
+.clock-box small { display: block; font-size: 0.75rem; font-weight: 600; }
+.clock { display: inline-block; background: var(--color-give); color: var(--color-give-contrast); font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); padding: 0 var(--space-3); border-radius: var(--radius-sm); font-variant-numeric: tabular-nums; }
+.pledge-btns { display: grid; gap: var(--space-2); }
+.ticker { overflow: hidden; background: var(--color-brand); color: var(--color-brand-contrast); border-radius: 999px; min-height: 2.75rem; display: flex; align-items: center; }
+.ticker-track { display: flex; gap: var(--space-5); white-space: nowrap; padding-left: var(--space-4); animation: marquee 30s linear infinite; width: max-content; font-weight: 600; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+.wall { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.wall li { background: var(--color-surface-2); border-radius: var(--radius-md); padding: var(--space-3); display: flex; gap: var(--space-2); align-items: flex-start; font-weight: 600; font-size: var(--step--1); line-height: 1.3; }
+.wall svg { width: 1rem; height: 1rem; fill: var(--color-live); flex: none; margin-top: 0.125rem; }
+.wall-h { font-size: var(--step--1); }
+
+/* On now */
+.now-row { display: grid; gap: var(--space-3); margin-bottom: var(--space-4); }
+.now-card { background: var(--color-surface); border: 1px solid var(--color-border); border-left: 0.5rem solid var(--color-live); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); align-items: flex-start; }
+.now-card.up { border-left-color: var(--color-brand); background: var(--color-surface-2); box-shadow: none; }
+.now-card .when { color: var(--color-text-muted); font-weight: 600; }
+.rail-h { margin-bottom: var(--space-2); }
+.rail { display: flex; gap: var(--space-3); overflow-x: auto; scroll-snap-type: x mandatory; padding: var(--space-1) var(--space-1) var(--space-3); margin: 0 calc(var(--space-1) * -1); }
+.ep { flex: 0 0 14rem; scroll-snap-align: start; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); overflow: hidden; }
+.ep-art { aspect-ratio: 16 / 9; background: var(--color-brand); display: grid; place-items: center; }
+.ep-art img { height: 100%; width: auto; aspect-ratio: 1; object-fit: cover; }
+.ep-body { padding: var(--space-3) var(--space-4) var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); align-items: flex-start; }
+.ep-body h3 { font-size: var(--step-1); }
+.meta { font-size: var(--step--1); color: var(--color-text-muted); font-weight: 600; }
+.bar { height: 0.375rem; width: 100%; background: var(--color-surface-2); border-radius: 999px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--color-brand); }
+
+/* Events & news */
+.event { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-3) 0; border-top: 1px solid var(--color-border); }
+.event:first-child { border-top: 0; }
+.date { width: 3.5rem; flex: none; background: var(--color-brand); color: var(--color-brand-contrast); border-radius: var(--radius-md); text-align: center; padding: var(--space-1) 0; font-family: var(--font-heading); line-height: 1.05; }
+.date span { display: block; font-size: var(--step--1); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.date b { display: block; font-size: var(--step-2); font-weight: 800; }
+.event h3 { font-size: var(--step-1); }
+.event p { color: var(--color-text-muted); font-size: var(--step--1); font-weight: 600; }
+.news-item { padding: var(--space-3) 0; border-top: 1px solid var(--color-border); }
+.news-item:first-of-type { border-top: 0; padding-top: 0; }
+.news-item h3 a { display: block; color: var(--color-text); text-decoration: none; min-height: 2.75rem; }
+.news-item h3 a:hover { color: var(--color-brand); }
+.news-item.lead { background: var(--color-surface-2); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-2); border-top: 0; }
+.news-item.lead h3 { font-size: var(--step-2); }
+.credit { font-size: var(--step--1); color: var(--color-text-muted); font-weight: 600; margin-top: var(--space-1); }
+
+/* More */
+.about { background: var(--color-brand); color: var(--color-brand-contrast); border: 0; display: grid; gap: var(--space-4); align-content: center; }
+.about p { max-width: 38rem; }
+.about .eyebrow { color: var(--color-brand-contrast); }
+.resources { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.resources .btn { background: var(--c-sky); color: var(--color-text); }
+
+/* Listen */
+.listen { display: grid; gap: var(--space-4); }
+.listen-player {
+  background: var(--color-brand); color: var(--color-brand-contrast); border-radius: var(--radius-lg); box-shadow: var(--shadow-1);
+  padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); align-items: center; text-align: center;
+}
+.listen-player .eyebrow { color: var(--color-brand-contrast); }
+.listen-player h2 { color: var(--color-brand-contrast); }
+.listen-art { width: min(11rem, 55%); aspect-ratio: 1; border-radius: var(--radius-lg); object-fit: cover; box-shadow: 0 0.5rem 1.5rem rgb(11 18 32 / 0.35); }
+.listen-player .play-big { text-align: left; }
+.listen-info { display: grid; gap: var(--space-4); align-content: start; }
+.listen-info .box { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); padding: var(--space-5); }
+.listen-info h3 { margin-bottom: var(--space-2); }
+.freq li { display: flex; justify-content: space-between; gap: var(--space-3); align-items: center; padding: var(--space-3) 0; border-top: 1px solid var(--color-border); min-height: 2.75rem; }
+.freq li:first-child { border-top: 0; }
+.freq b { font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); color: var(--color-brand); }
+.freq span { color: var(--color-text-muted); font-weight: 600; font-size: var(--step--1); }
+.freq[hidden] { display: none; }
+.seg-control { display: inline-flex; background: var(--color-surface); border-radius: 999px; padding: var(--space-1); max-width: 100%; }
+.seg-control button { min-height: 2.75rem; padding: 0 var(--space-4); border: 0; border-radius: 999px; background: transparent; color: var(--color-text); font-family: var(--font-heading); font-weight: 800; font-size: var(--step-0); }
+.seg-control button[aria-pressed="true"] { background: var(--color-brand); color: var(--color-brand-contrast); }
+.seg-control button:focus-visible { outline: 3px solid var(--color-focus); outline-offset: -4px; }
+.seg-control button[aria-pressed="true"]:focus-visible { outline-color: var(--color-player-focus); }
+
+/* Footer */
+.site-footer { background: var(--color-brand); color: var(--color-brand-contrast); margin-top: var(--space-5); padding: var(--space-6) var(--space-4) var(--space-5); }
+.site-footer a { color: var(--color-brand-contrast); display: inline-flex; align-items: center; min-height: 2.75rem; }
+.footer-in { max-width: 75rem; margin: 0 auto; display: grid; gap: var(--space-5); }
+.footer-brand { display: flex; align-items: center; gap: var(--space-3); }
+.footer-brand img { width: 3.5rem; height: 3.5rem; border-radius: var(--radius-md); }
+.footer-brand b { display: block; font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); line-height: 1.1; }
+address { font-style: normal; }
+.social { display: flex; gap: var(--space-2); }
+.site-footer .social a { width: 2.75rem; justify-content: center; border-radius: 50%; background: var(--c-sky); color: var(--color-text); }
+
+/* Player bar */
+[data-ui="player-bar"] {
+  position: fixed; inset: auto 0 0 0; z-index: 60; height: calc(var(--player-h) + env(safe-area-inset-bottom, 0px)); padding: 0 var(--space-3) env(safe-area-inset-bottom, 0px);
+  display: flex; align-items: center; gap: var(--space-3);
+  background: var(--color-player-bg); color: var(--color-player-text); border-top: 3px solid var(--c-sky);
+}
+.pb-play { width: 3rem; height: 3rem; flex: none; border-radius: 50%; border: 0; background: var(--c-sky); color: var(--color-text); display: grid; place-items: center; }
+.pb-title { flex: 1; min-width: 0; min-height: 2.75rem; background: transparent; border: 0; color: inherit; text-align: left; display: flex; flex-direction: column; justify-content: center; padding: 0; }
+.pb-title strong { font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pb-title small { font-size: var(--step--1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Sheets */
+.sheet { position: fixed; inset: 0; z-index: 100; background: var(--color-brand); color: var(--color-brand-contrast); overflow-y: auto; padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-5); }
+.sheet[hidden] { display: none; }
+.sheet:focus { outline: none; }
+.sheet-top { display: flex; align-items: center; justify-content: space-between; }
+.sheet-top .btn-ghost { background: transparent; color: var(--color-brand-contrast); border-color: var(--color-brand-contrast); }
+.sheet-nav { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.sheet-nav a { display: flex; align-items: center; min-height: 3.25rem; padding: 0 var(--space-4); border-radius: var(--radius-md); background: rgb(255 255 255 / 0.12); color: var(--color-brand-contrast); text-decoration: none; font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); }
+.quick { display: grid; gap: var(--space-3); margin-top: auto; }
+.quick a { display: flex; align-items: center; gap: var(--space-3); min-height: 4.5rem; padding: 0 var(--space-5); border-radius: var(--radius-lg); text-decoration: none; font-family: var(--font-heading); font-weight: 800; font-size: var(--step-2); }
+.quick svg { width: 2rem; height: 2rem; fill: currentColor; }
+.quick .q-listen { background: var(--c-sky); color: var(--color-text); }
+.quick .q-watch { background: var(--color-live); color: var(--color-live-contrast); }
+.quick .q-give { background: var(--color-give); color: var(--color-give-contrast); }
+.ps-art { align-self: center; width: min(78vw, 20rem); aspect-ratio: 1; border-radius: var(--radius-lg); object-fit: cover; box-shadow: 0 1rem 2.5rem rgb(11 18 32 / 0.4); }
+.ps-status { text-align: center; display: grid; gap: var(--space-2); justify-items: center; }
+.ps-controls { display: grid; gap: var(--space-4); justify-items: center; margin-top: auto; }
+.ps-play { width: 5rem; height: 5rem; border-radius: 50%; border: 0; background: var(--color-live); color: var(--color-live-contrast); display: grid; place-items: center; }
+.ps-play svg { width: 2.5rem; height: 2.5rem; }
+.ps-controls .btn-give { max-width: 24rem; }
+
+/* Desktop */
+@media (min-width: 768px) {
+  body { padding-bottom: calc(var(--player-h) + var(--space-3)); }
+  .site-header { padding: 0 var(--space-5); gap: var(--space-3); }
+  .menu-btn { display: none; }
+  .primary-nav { display: block; }
+  .primary-nav ul { display: flex; gap: var(--space-1); }
+  .primary-nav a { display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 var(--space-3); border-radius: 999px; color: var(--color-text); text-decoration: none; font-weight: 600; }
+  .primary-nav a[aria-current="page"] { background: var(--color-surface-2); color: var(--color-brand); }
+  .primary-nav a:hover { background: var(--color-surface-2); }
+  .primary-nav { order: 2; }
+  .brand { margin-right: auto; }
+  .header-give { order: 3; }
+  main { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-5); padding: var(--space-5); }
+  [data-section="live"], [data-section="give"] { grid-column: span 6; }
+  [data-section="on-now"], [data-section="more"], main > .listen { grid-column: 1 / -1; }
+  [data-section="events"] { grid-column: span 5; }
+  [data-section="news"] { grid-column: span 7; }
+  .live-card { padding: var(--space-6) var(--space-5); background: linear-gradient(110deg, var(--color-brand) 0%, var(--color-brand) 60%, var(--color-accent) 100%); flex: 1; justify-content: center; }
+  .live-card > *:not(.video-card):not(.live-art) { max-width: 60%; }
+  .live-card .video-card { max-width: none; }
+  .live-art { display: block; position: absolute; right: var(--space-5); top: 50%; transform: translateY(-50%); width: 30%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius-lg); box-shadow: 0 0.75rem 1.5rem rgb(11 18 32 / 0.3); }
+  html[data-state="live"] .live-art, html[data-state="pledge"] .live-art { display: none; }
+  html[data-state="live"] .live-card > *:not(.video-card) { max-width: none; }
+  html[data-state="pledge"] .live-card { flex: 0 0 auto; padding: var(--space-5); }
+  html[data-state="pledge"] .live-card > * { max-width: none; }
+  html[data-state="pledge"] .live-card .next-seg { max-width: none; }
+  .now-row { grid-template-columns: 1fr 1fr; }
+  .rail { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible; }
+  .ep { flex: none; }
+  .listen { grid-template-columns: 1fr 1fr; gap: var(--space-5); align-items: stretch; }
+  .listen-player { padding: var(--space-6) var(--space-5); justify-content: center; }
+  .listen-info { grid-template-rows: auto 1fr; }
+  .about { grid-template-columns: 1.4fr 1fr; align-items: center; padding: var(--space-6) var(--space-5); }
+  .about > :first-child { grid-column: 1; }
+  .about .resources { grid-column: 2; grid-row: 1 / span 3; justify-content: flex-end; }
+  .about .btn { min-width: 9rem; }
+  .footer-in { grid-template-columns: 2fr 2fr 1fr; align-items: start; padding: 0 var(--space-5); }
+  .site-footer { padding-inline: var(--space-4); }
+  .brand span { display: block; }
+  [data-ui="player-bar"] { padding-inline: max(var(--space-5), calc((100vw - 75rem) / 2 + var(--space-5))); }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .brand span { display: none; }
+  .primary-nav a { padding: 0 var(--space-2); font-size: var(--step--1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .ticker-track { white-space: normal; flex-wrap: wrap; width: auto; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11.2A4.6 4.6 0 0 1 8.6 5c1.4 0 2.6.7 3.4 1.9C12.8 5.7 14 5 15.4 5A4.6 4.6 0 0 1 20 9.8C20 15.8 12 21 12 21z"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-6.5l1.5 2.5v.5H8v-.5L9.5 18H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 2v9h16V7z"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18v2.5H3zm0 4.75h18v2.5H3zM3 15.5h18V18H3z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M5.7 3.3 12 9.6l6.3-6.3 2.4 2.4L14.4 12l6.3 6.3-2.4 2.4L12 14.4l-6.3 6.3-2.4-2.4L9.6 12 3.3 5.7z"/></symbol>
+  <symbol id="i-fb" viewBox="0 0 24 24"><path d="M13.5 21v-8h2.7l.4-3.2h-3.1V7.8c0-.9.3-1.5 1.6-1.5h1.6V3.4c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.4H7.5V13h2.8v8z"/></symbol>
+  <symbol id="i-yt" viewBox="0 0 24 24"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3z"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><path d="M7.5 3h9A4.5 4.5 0 0 1 21 7.5v9a4.5 4.5 0 0 1-4.5 4.5h-9A4.5 4.5 0 0 1 3 16.5v-9A4.5 4.5 0 0 1 7.5 3zm0 2A2.5 2.5 0 0 0 5 7.5v9A2.5 2.5 0 0 0 7.5 19h9a2.5 2.5 0 0 0 2.5-2.5v-9A2.5 2.5 0 0 0 16.5 5zM12 7.8a4.2 4.2 0 1 1 0 8.4 4.2 4.2 0 0 1 0-8.4zm0 2a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 0 0 0-4.4zM17 6.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></symbol>
+</svg>
+
+<div data-ui="state-switch" role="group" aria-label="Mockup state">
+  <span class="lbl">Mockup state</span>
+  <div class="seg">
+    <button type="button" data-set="normal" aria-pressed="true">Normal</button>
+    <button type="button" data-set="live" aria-pressed="false">Live</button>
+    <button type="button" data-set="pledge" aria-pressed="false">Pledge drive</button>
+  </div>
+</div>
+
+<div id="page">
+<header class="site-header">
+  <a class="brand" href="#top">
+    <img src="../../icons/ccr-logo-512x512.png" alt="" width="44" height="44">
+    <span>Catholic Community Media</span>
+  </a>
+  <nav class="primary-nav" aria-label="Primary">
+    <ul>
+      <li><a href="#top" aria-current="page">Home</a></li>
+      <li><a href="#listen">Listen</a></li>
+      <li><a href="#top">Watch</a></li>
+      <li><a href="#top">Schedule</a></li>
+      <li><a href="#top">Shows</a></li>
+      <li><a href="#events">Events</a></li>
+      <li><a href="#news">News</a></li>
+      <li><a href="#more">About</a></li>
+    </ul>
+  </nav>
+  <a class="btn btn-give header-give" href="#give">Give</a>
+  <button type="button" class="menu-btn" data-ui="menu-open" aria-label="Open menu" aria-haspopup="dialog"><svg class="icon" style="width:1.5rem;height:1.5rem" aria-hidden="true"><use href="#i-menu"/></svg></button>
+</header>
+
+<main id="top">
+  <section data-section="live" aria-labelledby="live-h">
+    <div class="wrap-live">
+      <div class="live-card on-navy">
+        <img class="live-art" src="../../icons/ccr-logo-blue-bg-512x512.png" alt="">
+        <div class="live-top">
+          <span class="chip chip-live"><i aria-hidden="true"></i>Live now</span>
+          <span class="chip chip-air"><i aria-hidden="true"></i>On air now</span>
+          <button type="button" class="chip market-chip" data-market-chip><span data-market-name>Baton Rouge</span> <span aria-hidden="true">&#9662;</span></button>
+        </div>
+
+        <div class="video-card">
+          <div class="poster">
+            <img class="art" src="../../icons/ccr-logo-blue-bg-512x512.png" alt="">
+            <span class="chip chip-live"><i aria-hidden="true"></i>Live video</span>
+            <button type="button" class="play-ov" aria-label="Play Wake Up! video"><svg aria-hidden="true"><use href="#i-play"/></svg></button>
+            <div class="lower"><strong>Wake Up!</strong><span>Mon&ndash;Fri 7am CT &middot; on camera now</span></div>
+          </div>
+        </div>
+
+        <h1 id="live-h">Catholic radio,<em>on air now.</em></h1>
+        <p class="live-sub">Wake Up! with Fr. Sample until 8:00. Free in Baton Rouge and New Orleans.</p>
+
+        <button type="button" class="play-big play-big-live" data-play aria-pressed="false">
+          <span class="disc"><svg class="ico-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="ico-pause" aria-hidden="true"><use href="#i-pause"/></svg></span>
+          <span><b data-play-label>Play live radio</b><small data-market-line>Baton Rouge &middot; WPYR 1380 AM</small></span>
+        </button>
+
+        <div class="next-seg">
+          <div><span class="lbl">Next live segment</span><b>4:00 PM</b></div>
+          <button type="button" class="btn btn-signal btn-sm" data-play style="margin-left:auto"><svg class="icon ico-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="icon ico-pause" aria-hidden="true"><use href="#i-pause"/></svg>Listen</button>
+        </div>
+      </div>
+
+      <div class="pledge-extra">
+        <div class="pledge-poster">
+          <div class="poster">
+            <img class="art" src="../../icons/ccr-logo-blue-bg-512x512.png" alt="">
+            <span class="chip chip-live"><i aria-hidden="true"></i>Pledge drive</span>
+            <button type="button" class="play-ov" aria-label="Play Wake Up! pledge video"><svg aria-hidden="true"><use href="#i-play"/></svg></button>
+            <div class="lower"><strong>Wake Up!</strong><span>Mon&ndash;Fri 7am CT</span></div>
+          </div>
+        </div>
+        <div class="seg-list">
+          <h3>Live pledge segments today</h3>
+          <ul>
+            <li><time>7:00</time><span>Wake Up! pledge kickoff <span class="tag">Sample</span></span></li>
+            <li><time>12:00</time><span>Noon matching-gift hour <span class="tag">Sample</span></span></li>
+            <li class="is-next"><time>4:00</time><span>Listener stories, next live <span class="tag">Sample</span></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-section="give" id="give" aria-labelledby="give-h">
+    <div class="give-panel">
+      <div class="give-head">
+        <svg aria-hidden="true"><use href="#i-heart"/></svg>
+        <div>
+          <h2 id="give-h">Keep the signal on</h2>
+          <p>Listener gifts keep Catholic radio free.</p>
+        </div>
+      </div>
+      <div class="give-body">
+        <div class="give-normal">
+          <div class="amounts" role="group" aria-label="Gift amount">
+            <button type="button" class="btn">$25</button>
+            <button type="button" class="btn">$50</button>
+            <button type="button" class="btn">$100</button>
+            <button type="button" class="btn other">Other</button>
+          </div>
+          <div class="give-opts">
+            <button type="button" class="btn">Give monthly</button>
+            <button type="button" class="btn">Join a club</button>
+          </div>
+          <a class="call-line" href="tel:+12255550100"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>Call&nbsp;<span class="num">(225) 555-0100</span> <span class="tag">Sample</span></span></a>
+        </div>
+
+        <div class="pledge-panel">
+          <div>
+            <p class="thermo-amt">$18,450 <span>of $40,000</span></p>
+            <div class="thermo" role="progressbar" aria-label="Pledge drive progress" aria-valuemin="0" aria-valuemax="40000" aria-valuenow="18450"><i></i></div>
+            <div class="thermo-meta"><span>46% there</span><span>$21,550 to go</span></div>
+          </div>
+          <div class="challenge on-navy">
+            <p>Every gift this hour matched up to $5,000</p>
+            <div class="clock-box"><small>Ends in</small><span class="clock" data-clock>38:12</span></div>
+          </div>
+          <div class="pledge-btns">
+            <a class="btn btn-give btn-block" href="#give">Give now</a>
+            <a class="btn btn-ghost btn-block" href="tel:+12255550100"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Call (225) 555-0100 <span class="tag">Sample</span></a>
+          </div>
+          <div class="ticker on-navy" role="marquee" aria-label="Recent donors">
+            <div class="ticker-track">
+              <span>Thank you, Mary from Gonzales!</span><span>Thank you, the Boudreaux family!</span><span>Thank you, Jim from Zachary!</span><span>Thank you, Anne from Metairie!</span>
+              <span aria-hidden="true">Thank you, Mary from Gonzales!</span><span aria-hidden="true">Thank you, the Boudreaux family!</span><span aria-hidden="true">Thank you, Jim from Zachary!</span><span aria-hidden="true">Thank you, Anne from Metairie!</span>
+            </div>
+          </div>
+          <div>
+            <h3 class="eyebrow wall-h" id="wall-h">Shout-out wall <span class="tag">Sample</span></h3>
+            <ul class="wall" aria-labelledby="wall-h">
+              <li><svg aria-hidden="true"><use href="#i-heart"/></svg>Mary from Gonzales</li>
+              <li><svg aria-hidden="true"><use href="#i-heart"/></svg>The Boudreaux family</li>
+              <li><svg aria-hidden="true"><use href="#i-heart"/></svg>Jim from Zachary</li>
+              <li><svg aria-hidden="true"><use href="#i-heart"/></svg>Anne from Metairie</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-section="on-now" aria-labelledby="onnow-h">
+    <div class="section-head"><h2 id="onnow-h">On the air</h2><a class="more-link" href="#listen">Full schedule</a></div>
+    <div class="now-row">
+      <article class="now-card">
+        <span class="chip chip-live"><i aria-hidden="true"></i>On now</span>
+        <h3>Wake Up!</h3>
+        <p class="when">with Fr. Sample &middot; until 8:00</p>
+      </article>
+      <article class="now-card up">
+        <span class="eyebrow">Up next</span>
+        <h3>Sample Morning Program</h3>
+        <p class="when">8:00 &middot; <span class="tag">Sample</span></p>
+      </article>
+    </div>
+    <h3 class="eyebrow rail-h" id="rail-h">Recent episodes</h3>
+    <div class="rail" tabindex="0" role="region" aria-labelledby="rail-h">
+      <article class="ep"><div class="ep-art"><img src="../../icons/ccr-logo-blue-bg-512x512.png" alt=""></div><div class="ep-body"><h3>Wake Up! Tuesday</h3><p class="meta"><span class="tag">Sample</span> 58 min</p><div class="bar" aria-hidden="true"><i style="width:70%"></i></div><button type="button" class="btn btn-signal btn-sm" aria-label="Play Wake Up! Tuesday"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Play</button></div></article>
+      <article class="ep"><div class="ep-art"><img src="../../icons/ccr-logo-blue-bg-512x512.png" alt=""></div><div class="ep-body"><h3>Wake Up! Monday</h3><p class="meta"><span class="tag">Sample</span> 61 min</p><div class="bar" aria-hidden="true"><i style="width:25%"></i></div><button type="button" class="btn btn-signal btn-sm" aria-label="Play Wake Up! Monday"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Play</button></div></article>
+      <article class="ep"><div class="ep-art"><img src="../../icons/ccr-logo-blue-bg-512x512.png" alt=""></div><div class="ep-body"><h3>Sample Rosary Hour</h3><p class="meta"><span class="tag">Sample</span> 30 min</p><div class="bar" aria-hidden="true"><i style="width:0"></i></div><button type="button" class="btn btn-signal btn-sm" aria-label="Play Sample Rosary Hour"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Play</button></div></article>
+      <article class="ep"><div class="ep-art"><img src="../../icons/ccr-logo-blue-bg-512x512.png" alt=""></div><div class="ep-body"><h3>Sample Q&amp;A Friday</h3><p class="meta"><span class="tag">Sample</span> 45 min</p><div class="bar" aria-hidden="true"><i style="width:100%"></i></div><button type="button" class="btn btn-signal btn-sm" aria-label="Play Sample Q&amp;A Friday"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Play</button></div></article>
+    </div>
+  </section>
+
+  <section data-section="events" id="events" aria-labelledby="events-h">
+    <div class="panel">
+      <div class="section-head"><h2 id="events-h">Next events</h2><a class="more-link" href="#events">Full calendar</a></div>
+      <ul>
+        <li class="event"><div class="date"><span>Nov</span><b>14</b></div><div><h3>Sample Parish Mission</h3><p>St. Sample Church &middot; 6:30 PM <span class="tag">Sample</span></p></div></li>
+        <li class="event"><div class="date"><span>Nov</span><b>21</b></div><div><h3>Sample Listener Gathering</h3><p>Baton Rouge &middot; 10:00 AM <span class="tag">Sample</span></p></div></li>
+        <li class="event"><div class="date"><span>Dec</span><b>06</b></div><div><h3>Sample Advent Concert</h3><p>New Orleans &middot; 7:00 PM <span class="tag">Sample</span></p></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section data-section="news" id="news" aria-labelledby="news-h">
+    <div class="panel">
+      <div class="section-head"><h2 id="news-h">News</h2><a class="more-link" href="#news">More news</a></div>
+      <article class="news-item lead"><h3><a href="#news">Sample: CCM listeners help restock the parish food pantry</a></h3><p class="credit"><b>Catholic Community Media</b> &middot; <span class="tag">Sample</span></p></article>
+      <article class="news-item"><h3><a href="#news">Sample: Bishop announces Advent schedule for the diocese</a></h3><p class="credit">Via <b>Diocese of Baton Rouge</b> &middot; <span class="tag">Sample</span></p></article>
+      <article class="news-item"><h3><a href="#news">Sample: Pope's message for the new liturgical year</a></h3><p class="credit">Via <b>EWTN News</b> &middot; <span class="tag">Sample</span></p></article>
+    </div>
+  </section>
+
+  <section data-section="more" id="more" aria-labelledby="more-h">
+    <div class="panel about on-navy">
+      <div>
+        <p class="eyebrow">About CCM</p>
+        <h2 id="more-h">Catholic media for the whole community</h2>
+      </div>
+      <p>Catholic Community Media brings Catholic radio, video and parish news to Baton Rouge and New Orleans, listener-supported and free to everyone.</p>
+      <ul class="resources" aria-label="Resources">
+        <li><a class="btn btn-sm" href="#more">Daily readings</a></li>
+        <li><a class="btn btn-sm" href="#more">Prayers</a></li>
+        <li><a class="btn btn-sm" href="#more">Contact us</a></li>
+        <li><a class="btn btn-sm" href="#more">Newsletter</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="listen" id="listen" data-ui="listen" aria-labelledby="listen-h">
+    <div class="listen-player on-navy">
+      <p class="eyebrow">Listen live</p>
+      <img class="listen-art" src="../../icons/ccr-logo-blue-bg-512x512.png" alt="">
+      <h2 id="listen-h">Tune in anywhere</h2>
+      <button type="button" class="play-big" data-play aria-pressed="false" style="max-width:24rem">
+        <span class="disc"><svg class="ico-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="ico-pause" aria-hidden="true"><use href="#i-pause"/></svg></span>
+        <span><b data-play-label>Play live radio</b><small data-market-line>Baton Rouge &middot; WPYR 1380 AM</small></span>
+      </button>
+      <div class="seg-control" role="group" aria-label="Market">
+        <button type="button" data-market="Baton Rouge" aria-pressed="true">Baton Rouge</button>
+        <button type="button" data-market="New Orleans" aria-pressed="false">New Orleans</button>
+      </div>
+    </div>
+    <div class="listen-info">
+      <div class="box">
+        <h3>Frequencies</h3>
+        <ul class="freq" data-freq="Baton Rouge">
+          <li><b>WPYR 1380 AM</b><span>Baton Rouge</span></li>
+          <li><b>WPYR-LP 105.9 FM</b><span>Baton Rouge</span></li>
+          <li><b>K286CS 105.1 FM</b><span>Downtown</span></li>
+        </ul>
+        <ul class="freq" data-freq="New Orleans" hidden>
+          <li><b>690 AM</b><span>New Orleans</span></li>
+          <li><b>101.5 FM</b><span>New Orleans</span></li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Today on air</h3>
+        <ul class="today">
+          <li><time>7:00</time><span>Wake Up! with Fr. Sample</span></li>
+          <li><time>8:00</time><span>Sample Morning Program <span class="tag">Sample</span></span></li>
+          <li><time>12:00</time><span>Angelus and Sample Noon Show <span class="tag">Sample</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-in">
+    <div class="footer-brand"><img src="../../icons/ccr-logo-blue-bg-512x512.png" alt="" width="56" height="56"><div><b>Catholic Community Media</b><span>Catholic Community Radio, Inc.</span></div></div>
+    <address>Sample address<br>Baton Rouge, Louisiana<br><a href="mailto:hello@example.org">hello@example.org</a> <span class="tag">Sample</span></address>
+    <div>
+      <div class="social">
+        <a href="#top" aria-label="Facebook"><svg class="icon" aria-hidden="true"><use href="#i-fb"/></svg></a>
+        <a href="#top" aria-label="YouTube"><svg class="icon" aria-hidden="true"><use href="#i-yt"/></svg></a>
+        <a href="#top" aria-label="Instagram"><svg class="icon" aria-hidden="true"><use href="#i-ig"/></svg></a>
+      </div>
+      <p><a href="#top">Get the newsletter</a></p>
+    </div>
+  </div>
+</footer>
+</div>
+
+<div data-ui="player-bar" role="region" aria-label="Player">
+  <button type="button" class="pb-play" data-play aria-pressed="false" aria-label="Play live radio"><svg class="ico-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="ico-pause" aria-hidden="true"><use href="#i-pause"/></svg></button>
+  <button type="button" class="pb-title" data-ui="player-open" aria-haspopup="dialog"><strong data-bar-title>Live &middot; Baton Rouge</strong><small>On air: Wake Up!</small></button>
+  <a class="btn btn-give btn-sm" href="#give">Give</a>
+</div>
+
+<div class="sheet" data-ui="menu-sheet" role="dialog" aria-modal="true" aria-labelledby="menu-h" hidden>
+  <div class="sheet-top"><h2 id="menu-h">Menu</h2><button type="button" class="btn btn-ghost btn-sm" data-close><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>Close</button></div>
+  <nav class="sheet-nav" aria-label="Menu">
+    <a href="#top" data-close>Home</a><a href="#listen" data-close>Listen</a><a href="#top" data-close>Watch</a><a href="#top" data-close>Schedule</a><a href="#top" data-close>Shows</a><a href="#events" data-close>Events</a><a href="#news" data-close>News</a><a href="#more" data-close>About</a>
+  </nav>
+  <div class="quick">
+    <a href="#listen" data-close class="q-listen"><svg aria-hidden="true"><use href="#i-play"/></svg>Listen</a>
+    <a href="#top" data-close class="q-watch"><svg aria-hidden="true"><use href="#i-tv"/></svg>Watch</a>
+    <a href="#give" data-close class="q-give"><svg aria-hidden="true"><use href="#i-heart"/></svg>Give</a>
+  </div>
+</div>
+
+<div class="sheet" data-ui="player-sheet" role="dialog" aria-modal="true" aria-labelledby="ps-h" hidden>
+  <div class="sheet-top"><h2 id="ps-h">Now playing</h2><button type="button" class="btn btn-ghost btn-sm" data-close><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>Close</button></div>
+  <img class="ps-art" src="../../icons/ccr-logo-blue-bg-512x512.png" alt="Catholic Community Radio logo">
+  <div class="ps-status">
+    <span class="chip chip-air"><i aria-hidden="true"></i>On air now</span>
+    <h3>On air: Wake Up!</h3>
+    <p data-ps-market>Live &middot; Baton Rouge</p>
+  </div>
+  <div class="ps-controls">
+    <button type="button" class="ps-play" data-play aria-pressed="false" aria-label="Play live radio"><svg class="ico-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="ico-pause" aria-hidden="true"><use href="#i-pause"/></svg></button>
+    <div class="seg-control" role="group" aria-label="Market">
+      <button type="button" data-market="Baton Rouge" aria-pressed="true">Baton Rouge</button>
+      <button type="button" data-market="New Orleans" aria-pressed="false">New Orleans</button>
+    </div>
+    <a class="btn btn-give btn-block" href="#give" data-close>Give</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var $ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  // Mockup state switch
+  var sw = $('[data-ui="state-switch"] button');
+  sw.forEach(function (b) {
+    b.addEventListener('click', function () {
+      root.setAttribute('data-state', b.getAttribute('data-set'));
+      sw.forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+    });
+  });
+
+  // Play state, shared by every play control
+  var playing = false;
+  function renderPlay() {
+    $('[data-play]').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(playing));
+      b.classList.toggle('is-playing', playing);
+      if (b.hasAttribute('aria-label')) b.setAttribute('aria-label', playing ? 'Pause live radio' : 'Play live radio');
+    });
+    $('[data-play-label]').forEach(function (l) { l.textContent = playing ? 'Pause live radio' : 'Play live radio'; });
+  }
+  $('[data-play]').forEach(function (b) { b.addEventListener('click', function () { playing = !playing; renderPlay(); }); });
+
+  // Market
+  var lines = { 'Baton Rouge': 'Baton Rouge · WPYR 1380 AM', 'New Orleans': 'New Orleans · 690 AM' };
+  var market = 'Baton Rouge';
+  function setMarket(m) {
+    market = m;
+    $('[data-market]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-market') === m)); });
+    $('[data-market-name]').forEach(function (e) { e.textContent = m; });
+    $('[data-market-line]').forEach(function (e) { e.textContent = lines[m]; });
+    $('[data-bar-title]').forEach(function (e) { e.textContent = 'Live · ' + m; });
+    $('[data-ps-market]').forEach(function (e) { e.textContent = 'Live · ' + m; });
+    $('[data-freq]').forEach(function (u) { u.hidden = u.getAttribute('data-freq') !== m; });
+  }
+  $('[data-market]').forEach(function (b) { b.addEventListener('click', function () { setMarket(b.getAttribute('data-market')); }); });
+  $('[data-market-chip]').forEach(function (b) { b.addEventListener('click', function () { setMarket(market === 'Baton Rouge' ? 'New Orleans' : 'Baton Rouge'); }); });
+
+  // Sheets
+  var behind = $('#page, [data-ui="player-bar"], [data-ui="state-switch"]');
+  var openSheet = null, opener = null;
+  function focusables(s) { return $('a[href], button:not([disabled]), [tabindex="0"]', s).filter(function (e) { return e.offsetParent !== null; }); }
+  function open(sheet, from) {
+    openSheet = sheet; opener = from;
+    sheet.hidden = false;
+    behind.forEach(function (e) { e.setAttribute('inert', ''); });
+    document.body.style.overflow = 'hidden';
+    (sheet.querySelector('button[data-close]') || sheet).focus();
+  }
+  function close() {
+    if (!openSheet) return;
+    openSheet.hidden = true; openSheet = null;
+    behind.forEach(function (e) { e.removeAttribute('inert'); });
+    document.body.style.overflow = '';
+    if (opener) opener.focus();
+    opener = null;
+  }
+  $('[data-ui="menu-open"]').forEach(function (b) { b.addEventListener('click', function () { open($('[data-ui="menu-sheet"]')[0], b); }); });
+  $('[data-ui="player-open"]').forEach(function (b) { b.addEventListener('click', function () { open($('[data-ui="player-sheet"]')[0], b); }); });
+  $('[data-close]').forEach(function (b) { b.addEventListener('click', close); });
+  document.addEventListener('keydown', function (e) {
+    if (!openSheet) return;
+    if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+    if (e.key === 'Tab') {
+      var f = focusables(openSheet); if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  $('.sheet').forEach(function (s) { s.setAttribute('tabindex', '-1'); });
+
+  // Sample pledge countdown
+  var clock = $('[data-clock]')[0], secs = 38 * 60 + 12;
+  if (clock) setInterval(function () {
+    secs = secs > 0 ? secs - 1 : 3600;
+    clock.textContent = Math.floor(secs / 60) + ':' + ('0' + (secs % 60)).slice(-2);
+  }, 1000);
+})();
+</script>
+</body>
+</html>
