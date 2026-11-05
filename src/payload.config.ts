@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import { migrations } from './migrations'
 import sharp from 'sharp'
 import { s3Storage } from '@payloadcms/storage-s3'
+import { resendAdapter } from '@payloadcms/email-resend'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -27,6 +28,13 @@ export default buildConfig({
   globals: [LabStatus],
   jobs: { tasks: [heartbeatTask] },
   endpoints: [cronEndpoint],
+  email: process.env.RESEND_API_KEY
+    ? resendAdapter({
+        apiKey: process.env.RESEND_API_KEY,
+        defaultFromAddress: (process.env.EMAIL_FROM || '').replace(/^.*<|>$/g, ''),
+        defaultFromName: 'CCM Lab',
+      })
+    : undefined,
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
