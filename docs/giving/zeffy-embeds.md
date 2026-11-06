@@ -9,11 +9,11 @@ Supplied by Christopher on 2026-11-06. These are CCM's live Zeffy forms. Use thi
 | General giving: **Give now** in the hero, header and player bar; Donate page | Become a Mission Partner Today | donation-form | `/embed/donation-form/become-a-mission-partner-today` | https://www.zeffy.com/embed/donation-form/become-a-mission-partner-today |
 | Club page `/give/st-carlo-acutis-club` | St. Carlo Acutis Club | ticketing | `/embed/ticketing/catholic-community-medias-saint-carlo-acutis-club` | https://www.zeffy.com/embed/ticketing/catholic-community-medias-saint-carlo-acutis-club |
 | Club page `/give/blessed-fulton-sheen-circle` | Blessed Fulton Sheen Circle | ticketing | `/embed/ticketing/catholic-community-medias-blessed-fulton-j-sheen-circle` | https://www.zeffy.com/embed/ticketing/catholic-community-medias-blessed-fulton-j-sheen-circle |
-| Club page `/give/coffee-club` | Coffee Club | ? | **not supplied yet** | **not supplied yet** |
+| Club page `/give/coffee-club` | Coffee Club | ticketing | `/embed/ticketing/catholic-community-medias-coffee-club` | https://www.zeffy.com/embed/ticketing/catholic-community-medias-coffee-club |
 
 Notes:
-- The two clubs are Zeffy **ticketing** forms, not donation forms. That's how Zeffy does recurring membership tiers, so the club pages must accept either type.
-- Coffee Club's embed is still to come from Christopher.
+- All three clubs are Zeffy **ticketing** forms, not donation forms. That's how Zeffy does recurring membership tiers, so the club pages must accept either type.
+- Club order on the site (hero pills, Donate page): Coffee Club, St. Carlo Acutis Club, Blessed Fulton Sheen Circle.
 
 ## Zeffy's embed pattern (verbatim, General form)
 
@@ -54,6 +54,21 @@ The club snippets are identical except for the form URL. Their fallback wrapper 
   <div data-zeffy-embed data-form-url="/embed/ticketing/catholic-community-medias-blessed-fulton-j-sheen-circle"></div>
   <div data-zeffy-embed-fallback style="display:none;">
     <div style="position:relative;overflow:hidden;height:450px;width:100%;padding-top:450px;"><iframe title='Donation form powered by Zeffy' style='position: absolute; border: 0; top:0;left:0;bottom:0;right:0;width:100%;height:100%' data-zeffy-embed-src='https://www.zeffy.com/embed/ticketing/catholic-community-medias-blessed-fulton-j-sheen-circle' allowpaymentrequest allowTransparency="true"></iframe></div>
+  </div>
+  <script
+    src="https://www.zeffy.com/embed/v2/zeffy-embed.js"
+    onerror="document.querySelectorAll('[data-zeffy-embed-fallback]').forEach(function(el){el.style.display='block';el.querySelectorAll('iframe[data-zeffy-embed-src]').forEach(function(f){f.src=f.getAttribute('data-zeffy-embed-src');});});">
+  </script>
+</div>
+```
+
+### Club snippet (Coffee Club, verbatim)
+
+```html
+<div>
+  <div data-zeffy-embed data-form-url="/embed/ticketing/catholic-community-medias-coffee-club"></div>
+  <div data-zeffy-embed-fallback style="display:none;">
+    <div style="position:relative;overflow:hidden;height:450px;width:100%;padding-top:450px;"><iframe title='Donation form powered by Zeffy' style='position: absolute; border: 0; top:0;left:0;bottom:0;right:0;width:100%;height:100%' data-zeffy-embed-src='https://www.zeffy.com/embed/ticketing/catholic-community-medias-coffee-club' allowpaymentrequest allowTransparency="true"></iframe></div>
   </div>
   <script
     src="https://www.zeffy.com/embed/v2/zeffy-embed.js"
