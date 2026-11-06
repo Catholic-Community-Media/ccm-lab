@@ -9,15 +9,15 @@
   - "Today in the Church" card (Penpot, 2026-11-06): the liturgical color is a full-width header band on the card, built like the Give header (icon, eyebrow "Living the liturgical calendar" + date, day name as title, "Color · Season · Rank · Year" subtitle). The separate color/season chips are removed.
 - **Liturgical color exception (Christopher, 2026-11-06):** liturgical colors are data, not brand color. On liturgy elements only (the day band, calendar cells, season accents), green, gold, cream (liturgical white), red, rose and violet may be used as large fills. This overrides the "green sparingly" rule and the brand text rule for those elements alone. Text on them uses the paired contrast color:
 
-  | Liturgical color | Fill | Text | Ratio |
-  |---|---|---|---|
-  | green | #74aa21 | #0b1220 | 6.70 |
-  | violet | #5b2a86 | #ffffff | 9.90 |
-  | rose | #e9a6bd | #0b1220 | 9.50 |
-  | red | #d13239 | #ffffff | 4.97 |
-  | white (cream tint) | #f1ede4 | #0b1220 | 16.03 |
-  | gold | #ffbd00 | #0b1220 | 11.17 |
-  | black | #1f1f24 | #ffffff | 16.41 |
+  | Liturgical color | Derived from | Fill | Text | Ratio |
+  |---|---|---|---|---|
+  | green | brand green | #74aa21 | #0b1220 | 6.70 |
+  | red | brand red | #d13239 | #ffffff | 4.97 |
+  | gold | brand gold | #ffbd00 | #0b1220 | 11.17 |
+  | violet | 55% navy + 35% red + 10% ink | #6a4272 | #ffffff | 7.97 |
+  | rose | 40% red + 10% navy + 50% white | #d99ca7 | #0b1220 | 8.26 |
+  | white (cream tint) | 10% gold + 3% ink + 87% white | #f8f1df | #0b1220 | 16.62 |
+  | black | 85% ink + 15% navy | #121c34 | #ffffff | 16.92 |
 
-  White days use the cream tint `#f1ede4` from the Ordo sacristy screens, never pure white. White and rose bands also get a 1px `#78716c` hairline (inset), as in Ordo's day band. Penpot token set: `liturgical`.
+  The liturgical colors are developed from the CCM palette, not copied from the Ordo engine's sacristy colors (Christopher's call). Liturgical white is always a cream tint, never pure white, as on the Ordo sacristy screens. White and rose bands get a 1px inset hairline in a navy tint, `#9caad2`. Penpot token set: `liturgical`; swatch board "Liturgical colors (brand-derived)" on the Home page.
 - Final token values: see the `:root` block of `public/design/c-signal/index.html` at commit ffb2bca.
