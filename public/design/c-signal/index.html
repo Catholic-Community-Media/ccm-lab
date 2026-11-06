@@ -173,9 +173,26 @@ main > section { min-width: 0; scroll-margin-top: calc(var(--switch-h) + var(--h
 .play-big .disc svg { width: 1.75rem; height: 1.75rem; }
 .play-big b { display: block; font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); line-height: 1.1; }
 .play-big small { display: block; font-size: var(--step--1); font-weight: 600; }
-.ico-pause, .is-playing > .disc .ico-play, .is-playing > .ico-play { display: none; }
-.is-playing > .disc .ico-pause, .is-playing > .ico-pause { display: block; }
+/* Play/pause morph: both glyphs are stacked and cross-fade (transform + opacity only, no layout change) */
+.disc > svg, .pb-play > svg, .ps-play > svg, .morph > svg { grid-area: 1 / 1; transition: opacity 0.2s ease, transform 0.25s ease; }
+.morph { display: inline-grid; place-items: center; width: 1.25rem; height: 1.25rem; flex: none; }
+.ico-pause { opacity: 0; transform: scale(0.5) rotate(-60deg); }
+.is-playing .ico-play { opacity: 0; transform: scale(0.5) rotate(60deg); }
+.is-playing .ico-pause { opacity: 1; transform: none; }
 .play-big.is-playing .disc { animation: pulse 2s ease-out infinite; }
+/* Signal bars: static when paused, animated only while the mockup's playing state is on */
+.eq { display: inline-flex; align-items: flex-end; gap: 3px; height: 1.5rem; margin-left: auto; flex: none; }
+.eq i { width: 4px; height: 100%; border-radius: 2px; background: currentColor; transform-origin: bottom; transform: scaleY(var(--s, 0.4)); }
+.eq i:nth-child(2) { --s: 0.75; }
+.eq i:nth-child(3) { --s: 0.5; }
+.eq i:nth-child(4) { --s: 0.9; }
+html[data-playing="true"] .eq i { animation: eq 0.8s ease-in-out infinite alternate; }
+html[data-playing="true"] .eq i:nth-child(2) { animation-duration: 0.6s; animation-delay: -0.2s; }
+html[data-playing="true"] .eq i:nth-child(3) { animation-duration: 0.95s; animation-delay: -0.4s; }
+html[data-playing="true"] .eq i:nth-child(4) { animation-duration: 0.7s; animation-delay: -0.1s; }
+@keyframes eq { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
+[data-ui="player-bar"] .eq { display: none; color: var(--c-sky); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgb(255 255 255 / 0.6); } 100% { box-shadow: 0 0 0 1rem rgb(255 255 255 / 0); } }
 
 /* Video poster */
@@ -222,8 +239,14 @@ html[data-state="pledge"] .pledge-extra { display: flex; flex-direction: column;
 .give-body { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); flex: 1; }
 .give-normal { display: flex; flex-direction: column; gap: var(--space-4); flex: 1; justify-content: center; gap: var(--space-5); }
 .amounts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); }
-.amounts .btn { background: var(--color-give); color: var(--color-give-contrast); font-size: var(--step-1); padding: 0; min-height: 3.5rem; border-radius: var(--radius-md); }
-.amounts .btn.other { background: var(--color-surface); color: var(--color-brand); border-color: var(--color-brand); font-size: var(--step-0); }
+.amounts .btn { background: var(--color-surface); color: var(--color-brand); border-color: var(--color-brand); font-size: var(--step-1); padding: 0; min-height: 3.5rem; border-radius: var(--radius-md); transition: transform 0.15s ease; }
+.amounts .btn.other { font-size: var(--step-0); }
+.amounts .btn[aria-pressed="true"] { background: var(--color-give); color: var(--color-give-contrast); border-color: var(--color-give-contrast); }
+/* Give confirm: the label swaps in place and the heart pulses (transform only) */
+.give-go { position: relative; min-height: 3.5rem; font-size: var(--step-1); }
+.give-go .heart { fill: currentColor; width: 1.5rem; height: 1.5rem; }
+.give-go.is-thanked .heart { animation: heart 0.7s ease-out 2; }
+@keyframes heart { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.5); } 70% { transform: scale(0.95); } }
 .give-opts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
 .give-opts .btn { background: var(--color-surface); color: var(--color-brand); border-color: var(--color-brand); font-size: var(--step--1); }
 .call-line {
@@ -270,6 +293,50 @@ html[data-state="pledge"] .pledge-panel { display: flex; }
 .meta { font-size: var(--step--1); color: var(--color-text-muted); font-weight: 600; }
 .bar { height: 0.375rem; width: 100%; background: var(--color-surface-2); border-radius: 999px; overflow: hidden; }
 .bar i { display: block; height: 100%; background: var(--color-brand); }
+
+/* Bento tiles (one question or action each) */
+.bento { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+.bento > * { min-width: 0; }
+.tile { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; }
+.tile > .btn { align-self: stretch; }
+.tile-calm { background: var(--color-surface-2); box-shadow: none; }
+.t-rail { display: block; }
+
+/* Today in the Church */
+.church-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); width: 100%; }
+.church-day { font-family: var(--font-heading); font-weight: 800; font-size: var(--step-2); line-height: 1.05; }
+.church-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.lit-chip, .chip-plain { display: inline-flex; align-items: center; min-height: 1.75rem; padding: 0 var(--space-3); border-radius: 999px; font-size: var(--step--1); font-weight: 600; white-space: nowrap; }
+.lit-chip { background: var(--lit-bg); color: var(--lit-fg); border: 1px solid var(--lit-bd, transparent); }
+.lit-chip[data-lit="green"] { --lit-bg: var(--color-success); --lit-fg: var(--color-success-contrast); }
+.lit-chip[data-lit="white"] { --lit-bg: var(--color-surface); --lit-fg: var(--color-text); --lit-bd: var(--color-text-muted); }
+.lit-chip[data-lit="red"] { --lit-bg: var(--color-live); --lit-fg: var(--color-live-contrast); }
+.chip-plain { background: var(--color-surface-2); color: var(--color-text); }
+.btn-reflect { border-color: var(--color-border); background: var(--color-surface); color: var(--color-text-muted); }
+.btn-reflect:disabled { cursor: not-allowed; }
+.week { width: 100%; border-top: 1px solid var(--color-border); }
+.week summary { display: flex; align-items: center; justify-content: space-between; min-height: 2.75rem; cursor: pointer; font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); color: var(--color-brand); list-style: none; }
+.week summary::-webkit-details-marker { display: none; }
+.week summary::after { content: ""; width: 0.6rem; height: 0.6rem; border: solid currentColor; border-width: 0 3px 3px 0; transform: rotate(45deg); transition: transform 0.2s ease; margin-right: var(--space-2); }
+.week[open] summary::after { transform: rotate(-135deg); }
+.week li { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; padding: var(--space-2) 0; border-top: 1px solid var(--color-border); }
+.week time { font-family: var(--font-heading); font-weight: 800; color: var(--color-brand); line-height: 1.1; }
+.week .wk-name { font-weight: 600; line-height: 1.3; }
+.week .wk-name small { display: block; color: var(--color-text-muted); font-size: var(--step--1); }
+.tile .credit { margin-top: 0; }
+
+/* Continue listening */
+.cont-row { display: flex; align-items: center; gap: var(--space-3); width: 100%; }
+.cont-row img { width: 4rem; height: 4rem; border-radius: var(--radius-md); object-fit: cover; flex: none; }
+.cont-row > div { flex: 1; min-width: 0; }
+.cont-title { font-family: var(--font-heading); font-weight: 800; font-size: var(--step-1); line-height: 1.1; }
+
+/* Ask for prayer */
+.pray-form { display: grid; gap: var(--space-2); width: 100%; }
+.pray-form input { min-height: 2.75rem; padding: 0 var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font: inherit; width: 100%; }
+.pray-form .btn { position: relative; }
+.pray-form .check { position: absolute; right: var(--space-3); opacity: 0; transform: scale(0.8); transition: opacity 0.5s ease, transform 0.5s ease; }
+.pray-form.is-sent .check { opacity: 1; transform: none; }
 
 /* Events & news */
 .event { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-3) 0; border-top: 1px solid var(--color-border); }
@@ -375,7 +442,8 @@ address { font-style: normal; }
   .brand { margin-right: auto; }
   .header-give { order: 3; }
   main { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-5); padding: var(--space-5); }
-  [data-section="live"], [data-section="give"] { grid-column: span 6; }
+  [data-section="live"] { grid-column: span 7; }
+  [data-section="give"] { grid-column: span 5; }
   [data-section="on-now"], [data-section="more"], main > .listen { grid-column: 1 / -1; }
   [data-section="events"] { grid-column: span 5; }
   [data-section="news"] { grid-column: span 7; }
@@ -388,9 +456,10 @@ address { font-style: normal; }
   html[data-state="pledge"] .live-card { flex: 0 0 auto; padding: var(--space-5); }
   html[data-state="pledge"] .live-card > * { max-width: none; }
   html[data-state="pledge"] .live-card .next-seg { max-width: none; }
-  .now-row { grid-template-columns: 1fr 1fr; }
-  .rail { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible; }
-  .ep { flex: none; }
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); grid-template-areas: "now up" "church church" "cont pray" "rail rail"; }
+  .t-now { grid-area: now; } .t-up { grid-area: up; } .t-church { grid-area: church; } .t-cont { grid-area: cont; } .t-pray { grid-area: pray; } .t-rail { grid-area: rail; }
+  .ep { flex: 0 0 12.5rem; }
+  [data-ui="player-bar"] .eq { display: inline-flex; margin-left: 0; }
   .listen { grid-template-columns: 1fr 1fr; gap: var(--space-5); align-items: stretch; }
   .listen-player { padding: var(--space-6) var(--space-5); justify-content: center; }
   .listen-info { grid-template-rows: auto 1fr; }
@@ -402,6 +471,9 @@ address { font-style: normal; }
   .site-footer { padding-inline: var(--space-4); }
   .brand span { display: block; }
   [data-ui="player-bar"] { padding-inline: max(var(--space-5), calc((100vw - 75rem) / 2 + var(--space-5))); }
+}
+@media (min-width: 1024px) {
+  .bento { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-areas: "now up church church" "cont cont church church" "rail rail rail pray"; }
 }
 @media (min-width: 768px) and (max-width: 1023px) {
   .brand span { display: none; }
@@ -420,6 +492,7 @@ address { font-style: normal; }
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></symbol>
   <symbol id="i-pause" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></symbol>
   <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11.2A4.6 4.6 0 0 1 8.6 5c1.4 0 2.6.7 3.4 1.9C12.8 5.7 14 5 15.4 5A4.6 4.6 0 0 1 20 9.8C20 15.8 12 21 12 21z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M9.5 16.2 5.3 12l-1.9 1.9 6.1 6.1L21 8.3l-1.9-1.9z"/></symbol>
   <symbol id="i-tv" viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-6.5l1.5 2.5v.5H8v-.5L9.5 18H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 2v9h16V7z"/></symbol>
   <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></symbol>
   <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18v2.5H3zm0 4.75h18v2.5H3zM3 15.5h18V18H3z"/></symbol>
@@ -439,6 +512,7 @@ address { font-style: normal; }
 </div>
 
 <div id="page">
+<!-- Official CCM logo (Avenir Condensed wordmark) to come from Christopher -->
 <header class="site-header">
   <a class="brand" href="#top">
     <img src="../../icons/ccr-logo-512x512.png" alt="" width="44" height="44">
@@ -486,11 +560,12 @@ address { font-style: normal; }
         <button type="button" class="play-big play-big-live" data-play aria-pressed="false">
           <span class="disc"><svg class="ico-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="ico-pause" aria-hidden="true"><use href="#i-pause"/></svg></span>
           <span><b data-play-label>Play live radio</b><small data-market-line>Baton Rouge &middot; WPYR 1380 AM</small></span>
+          <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
         </button>
 
         <div class="next-seg">
           <div><span class="lbl">Next live segment</span><b>4:00 PM</b></div>
-          <button type="button" class="btn btn-signal btn-sm" data-play style="margin-left:auto"><svg class="icon ico-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="icon ico-pause" aria-hidden="true"><use href="#i-pause"/></svg>Listen</button>
+          <button type="button" class="btn btn-signal btn-sm" data-play style="margin-left:auto"><span class="morph"><svg class="ico-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="ico-pause" aria-hidden="true"><use href="#i-pause"/></svg></span>Listen</button>
         </div>
       </div>
 
@@ -527,11 +602,13 @@ address { font-style: normal; }
       <div class="give-body">
         <div class="give-normal">
           <div class="amounts" role="group" aria-label="Gift amount">
-            <button type="button" class="btn">$25</button>
-            <button type="button" class="btn">$50</button>
-            <button type="button" class="btn">$100</button>
-            <button type="button" class="btn other">Other</button>
+            <button type="button" class="btn" data-amount="$25" aria-pressed="false">$25</button>
+            <button type="button" class="btn" data-amount="$50" aria-pressed="true">$50</button>
+            <button type="button" class="btn" data-amount="$100" aria-pressed="false">$100</button>
+            <button type="button" class="btn other" data-amount="" aria-pressed="false">Other</button>
           </div>
+          <button type="button" class="btn btn-give btn-block give-go" data-give-go><svg class="icon heart" aria-hidden="true"><use href="#i-heart"/></svg><span data-give-label>Give $50</span></button>
+          <p class="sr-only" role="status" data-give-status></p>
           <div class="give-opts">
             <button type="button" class="btn">Give monthly</button>
             <button type="button" class="btn">Join a club</button>
@@ -574,25 +651,76 @@ address { font-style: normal; }
   </section>
 
   <section data-section="on-now" aria-labelledby="onnow-h">
-    <div class="section-head"><h2 id="onnow-h">On the air</h2><a class="more-link" href="#listen">Full schedule</a></div>
-    <div class="now-row">
-      <article class="now-card">
+    <div class="section-head"><h2 id="onnow-h">Today</h2><a class="more-link" href="#listen">Full schedule</a></div>
+    <div class="bento">
+      <article class="now-card t-now">
         <span class="chip chip-live"><i aria-hidden="true"></i>On now</span>
         <h3>Wake Up!</h3>
         <p class="when">with Fr. Sample &middot; until 8:00</p>
       </article>
-      <article class="now-card up">
+      <article class="now-card up t-up">
         <span class="eyebrow">Up next</span>
         <h3>Sample Morning Program</h3>
         <p class="when">8:00 &middot; <span class="tag">Sample</span></p>
       </article>
-    </div>
-    <h3 class="eyebrow rail-h" id="rail-h">Recent episodes</h3>
-    <div class="rail" tabindex="0" role="region" aria-labelledby="rail-h">
+
+      <article class="tile t-cont" aria-labelledby="cont-h">
+        <h3 class="eyebrow" id="cont-h">Continue listening</h3>
+        <div class="cont-row">
+          <img src="../../icons/ccr-logo-blue-bg-512x512.png" alt="">
+          <div>
+            <p class="cont-title">Wake Up! 11/5</p>
+            <p class="meta">23 min left <span class="tag">Sample</span></p>
+          </div>
+          <button type="button" class="btn btn-signal btn-sm" data-episode aria-pressed="false" aria-label="Resume Wake Up! 11/5"><span class="morph"><svg class="ico-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="ico-pause" aria-hidden="true"><use href="#i-pause"/></svg></span><span data-episode-label>Resume</span></button>
+        </div>
+        <div class="bar" role="progressbar" aria-label="Episode progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="62" style="margin-top:auto"><i style="width:62%"></i></div>
+      </article>
+
+      <article class="tile t-church" aria-labelledby="church-h">
+        <div class="church-top"><h3 class="eyebrow" id="church-h">Today in the Church</h3><span class="meta">Fri, Nov 6</span></div>
+        <p class="church-day">Friday of the 31st Week in Ordinary Time</p>
+        <div class="church-chips">
+          <span class="lit-chip" data-lit="green">Green</span>
+          <span class="chip-plain">Ordinary Time</span>
+          <span class="chip-plain">Feria &middot; Year A</span>
+        </div>
+        <a class="btn btn-brand" href="https://bible.usccb.org/bible/readings/110626.cfm" target="_blank" rel="noopener noreferrer">Read today&rsquo;s readings<span class="sr-only"> (opens in a new tab)</span></a>
+        <!-- Future hook: "Today's reflection (audio)". Enable and wire to the audio player once a daily reflection feed exists. -->
+        <button type="button" class="btn btn-reflect" disabled aria-disabled="true"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Today&rsquo;s reflection (audio) <span class="tag">Coming soon</span></button>
+        <details class="week">
+          <summary>This week</summary>
+          <ul>
+            <li><time datetime="2026-11-08">Sun 8</time><span class="wk-name">32nd Sunday in Ordinary Time<small>Sunday</small></span><span class="lit-chip" data-lit="green">Green</span></li>
+            <li><time datetime="2026-11-09">Mon 9</time><span class="wk-name">Dedication of the Lateran Basilica<small>Feast</small></span><span class="lit-chip" data-lit="white">White</span></li>
+            <li><time datetime="2026-11-10">Tue 10</time><span class="wk-name">St. Leo the Great, Pope and Doctor<small>Memorial</small></span><span class="lit-chip" data-lit="white">White</span></li>
+            <li><time datetime="2026-11-11">Wed 11</time><span class="wk-name">St. Martin of Tours, Bishop<small>Memorial</small></span><span class="lit-chip" data-lit="white">White</span></li>
+            <li><time datetime="2026-11-12">Thu 12</time><span class="wk-name">St. Josaphat, Bishop and Martyr<small>Memorial</small></span><span class="lit-chip" data-lit="red">Red</span></li>
+          </ul>
+        </details>
+        <p class="credit">Liturgical calendar: romcal &middot; Readings: USCCB</p>
+      </article>
+
+      <div class="t-rail">
+        <h3 class="eyebrow rail-h" id="rail-h">Recent episodes</h3>
+        <div class="rail" tabindex="0" role="region" aria-labelledby="rail-h">
       <article class="ep"><div class="ep-art"><img src="../../icons/ccr-logo-blue-bg-512x512.png" alt=""></div><div class="ep-body"><h3>Wake Up! Tuesday</h3><p class="meta"><span class="tag">Sample</span> 58 min</p><div class="bar" aria-hidden="true"><i style="width:70%"></i></div><button type="button" class="btn btn-signal btn-sm" aria-label="Play Wake Up! Tuesday"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Play</button></div></article>
       <article class="ep"><div class="ep-art"><img src="../../icons/ccr-logo-blue-bg-512x512.png" alt=""></div><div class="ep-body"><h3>Wake Up! Monday</h3><p class="meta"><span class="tag">Sample</span> 61 min</p><div class="bar" aria-hidden="true"><i style="width:25%"></i></div><button type="button" class="btn btn-signal btn-sm" aria-label="Play Wake Up! Monday"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Play</button></div></article>
       <article class="ep"><div class="ep-art"><img src="../../icons/ccr-logo-blue-bg-512x512.png" alt=""></div><div class="ep-body"><h3>Sample Rosary Hour</h3><p class="meta"><span class="tag">Sample</span> 30 min</p><div class="bar" aria-hidden="true"><i style="width:0"></i></div><button type="button" class="btn btn-signal btn-sm" aria-label="Play Sample Rosary Hour"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Play</button></div></article>
       <article class="ep"><div class="ep-art"><img src="../../icons/ccr-logo-blue-bg-512x512.png" alt=""></div><div class="ep-body"><h3>Sample Q&amp;A Friday</h3><p class="meta"><span class="tag">Sample</span> 45 min</p><div class="bar" aria-hidden="true"><i style="width:100%"></i></div><button type="button" class="btn btn-signal btn-sm" aria-label="Play Sample Q&amp;A Friday"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Play</button></div></article>
+    </div>
+      </div>
+
+      <article class="tile tile-calm t-pray" aria-labelledby="pray-h">
+        <h3 class="eyebrow" id="pray-h">Ask for prayer</h3>
+        <p>Share an intention and we&rsquo;ll hold it in prayer. <span class="tag">Sample</span></p>
+        <form class="pray-form" data-pray>
+          <label class="sr-only" for="pray-in">Your intention (optional)</label>
+          <input id="pray-in" type="text" placeholder="Your intention (optional)" autocomplete="off">
+          <button type="submit" class="btn btn-ghost btn-block"><span data-pray-label>Send intention</span><svg class="icon check" aria-hidden="true"><use href="#i-check"/></svg></button>
+          <p class="sr-only" role="status" data-pray-status></p>
+        </form>
+      </article>
     </div>
   </section>
 
@@ -640,6 +768,7 @@ address { font-style: normal; }
       <button type="button" class="play-big" data-play aria-pressed="false" style="max-width:24rem">
         <span class="disc"><svg class="ico-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="ico-pause" aria-hidden="true"><use href="#i-pause"/></svg></span>
         <span><b data-play-label>Play live radio</b><small data-market-line>Baton Rouge &middot; WPYR 1380 AM</small></span>
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
       </button>
       <div class="seg-control" role="group" aria-label="Market">
         <button type="button" data-market="Baton Rouge" aria-pressed="true">Baton Rouge</button>
@@ -690,6 +819,7 @@ address { font-style: normal; }
 <div data-ui="player-bar" role="region" aria-label="Player">
   <button type="button" class="pb-play" data-play aria-pressed="false" aria-label="Play live radio"><svg class="ico-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="ico-pause" aria-hidden="true"><use href="#i-pause"/></svg></button>
   <button type="button" class="pb-title" data-ui="player-open" aria-haspopup="dialog"><strong data-bar-title>Live &middot; Baton Rouge</strong><small>On air: Wake Up!</small></button>
+  <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
   <a class="btn btn-give btn-sm" href="#give">Give</a>
 </div>
 
@@ -745,9 +875,61 @@ address { font-style: normal; }
       b.classList.toggle('is-playing', playing);
       if (b.hasAttribute('aria-label')) b.setAttribute('aria-label', playing ? 'Pause live radio' : 'Play live radio');
     });
+    root.setAttribute('data-playing', String(playing));
     $('[data-play-label]').forEach(function (l) { l.textContent = playing ? 'Pause live radio' : 'Play live radio'; });
   }
   $('[data-play]').forEach(function (b) { b.addEventListener('click', function () { playing = !playing; renderPlay(); }); });
+
+  var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function buzz() { if (!reduced) { try { navigator.vibrate?.(30); } catch (e) {} } }
+
+  // Continue listening: its own play/pause (sample), separate from live radio
+  $('[data-episode]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', String(on));
+      b.classList.toggle('is-playing', on);
+      b.setAttribute('aria-label', (on ? 'Pause' : 'Resume') + ' Wake Up! 11/5');
+      $('[data-episode-label]', b)[0].textContent = on ? 'Pause' : 'Resume';
+    });
+  });
+
+  // Give: pick an amount, then commit
+  var amt = '$50', goBtn = $('[data-give-go]')[0], goLabel = $('[data-give-label]')[0], giveStatus = $('[data-give-status]')[0], thanksTimer;
+  function giveText() { return amt ? 'Give ' + amt : 'Give another amount'; }
+  $('[data-amount]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      amt = b.getAttribute('data-amount');
+      $('[data-amount]').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+      if (!goBtn.classList.contains('is-thanked')) goLabel.textContent = giveText();
+    });
+  });
+  if (goBtn) goBtn.addEventListener('click', function () {
+    // Stands in for a completed Zeffy gift (the real flow hands off to Zeffy checkout)
+    clearTimeout(thanksTimer);
+    goBtn.classList.remove('is-thanked');
+    void goBtn.offsetWidth;
+    goBtn.classList.add('is-thanked');
+    goLabel.textContent = 'Thank you!';
+    giveStatus.textContent = 'Thank you for your gift!';
+    buzz();
+    thanksTimer = setTimeout(function () { goBtn.classList.remove('is-thanked'); goLabel.textContent = giveText(); giveStatus.textContent = ''; }, 2600);
+  });
+
+  // Ask for prayer: gentle confirmation (sample, nothing is sent)
+  var pray = $('[data-pray]')[0];
+  if (pray) pray.addEventListener('submit', function (e) {
+    e.preventDefault();
+    pray.classList.add('is-sent');
+    $('[data-pray-label]', pray)[0].textContent = 'Intention received';
+    $('[data-pray-status]', pray)[0].textContent = 'Your intention was received.';
+    setTimeout(function () {
+      pray.classList.remove('is-sent');
+      $('[data-pray-label]', pray)[0].textContent = 'Send intention';
+      $('[data-pray-status]', pray)[0].textContent = '';
+      pray.reset();
+    }, 4000);
+  });
 
   // Market
   var lines = { 'Baton Rouge': 'Baton Rouge · WPYR 1380 AM', 'New Orleans': 'New Orleans · 690 AM' };

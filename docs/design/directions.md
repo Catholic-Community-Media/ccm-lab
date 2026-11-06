@@ -126,3 +126,9 @@ Screenshots: `b-parish-phone-normal.png`, `b-parish-phone-pledge.png`, `b-parish
 - **Green #74aa21:** only the small "On air now" chips.
 
 Screenshots: `c-signal-phone-normal.png`, `c-signal-phone-pledge.png`, `c-signal-desktop-normal.png`, `c-signal-desktop-pledge.png`.
+
+**2027 trends added (Direction C)**
+
+- **Bento "Today":** at 768px and up the home is a grid of bounded tiles (main is a 12-column grid; the `on-now` section holds an inner bento with named areas). Each tile answers one question or offers one action: On now, Up next, Today in the Church, Continue listening, Recent episodes, Ask for prayer. On phones the tiles stack in the AV-first order the tests check (live, give, on-now, events, news).
+- **Today in the Church:** day name, a small liturgical-color chip (green stays a small chip; white is a light chip with a border; red is the brand red), season and rank, a link to the USCCB readings (no reading text reproduced), a "This week" `<details>` list, and a disabled "Today's reflection (audio)" hook marked Coming soon. Data is real romcal 1.3.0 (US calendar) for Fri Nov 6 2026 and the days after; credit line "Liturgical calendar: romcal · Readings: USCCB".
+- **Honest micro-interactions:** the play button morphs between play and pause and the signal bars animate only while the mockup is in its playing state. "Give $X" shows a heart pulse and "Thank you!" (stands in for a completed Zeffy gift) and calls `navigator.vibrate?.(30)`. "Ask for prayer" shows a soft check. All motion is transform/opacity only and is off under `prefers-reduced-motion: reduce`.

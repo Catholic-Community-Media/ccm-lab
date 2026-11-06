@@ -8,7 +8,7 @@ const base = 'http://localhost:3000'
 const browser = await chromium.launch()
 for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1440, 900]] as const) {
   const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 2 })
-  await context.addCookies([{ name: LAB_COOKIE, value: await passcodeToken('test-pass'), url: base }])
+  await context.addCookies([{ name: LAB_COOKIE, value: await passcodeToken(process.env.LAB_PASSCODE ?? 'test-pass'), url: base }])
   const page = await context.newPage()
   for (const state of ['normal', 'pledge'] as const) {
     await page.goto(`${base}/design/${id}/index.html`)
