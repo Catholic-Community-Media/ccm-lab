@@ -159,11 +159,11 @@
       "line-height": {
         "body": {
           "$value": "1.55",
-          "$type": "lineHeights"
+          "$type": "number"
         },
         "heading": {
           "$value": "1.15",
-          "$type": "lineHeights"
+          "$type": "number"
         }
       }
     },
