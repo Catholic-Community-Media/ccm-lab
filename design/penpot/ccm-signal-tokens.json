@@ -1,0 +1,286 @@
+{
+  "brand": {
+    "navy": {
+      "$value": "#3954a5",
+      "$type": "color",
+      "$description": "White text OK"
+    },
+    "red": {
+      "$value": "#d13239",
+      "$type": "color",
+      "$description": "White text OK"
+    },
+    "sky": {
+      "$value": "#6cc7fe",
+      "$type": "color",
+      "$description": "Ink text only"
+    },
+    "gold": {
+      "$value": "#ffbd00",
+      "$type": "color",
+      "$description": "Ink text only"
+    },
+    "blue": {
+      "$value": "#299cd9",
+      "$type": "color",
+      "$description": "Ink text only"
+    },
+    "green": {
+      "$value": "#74aa21",
+      "$type": "color",
+      "$description": "Ink text only \u00b7 use SPARINGLY (small status chips/dots)"
+    },
+    "ink": {
+      "$value": "#0b1220",
+      "$type": "color"
+    },
+    "white": {
+      "$value": "#ffffff",
+      "$type": "color"
+    }
+  },
+  "signal": {
+    "color": {
+      "bg": {
+        "$value": "#f5f9ff",
+        "$type": "color"
+      },
+      "surface": {
+        "$value": "{brand.white}",
+        "$type": "color"
+      },
+      "surface-2": {
+        "$value": "#e6f4ff",
+        "$type": "color"
+      },
+      "text": {
+        "$value": "{brand.ink}",
+        "$type": "color"
+      },
+      "text-muted": {
+        "$value": "#4a5a73",
+        "$type": "color"
+      },
+      "border": {
+        "$value": "#d3e2f3",
+        "$type": "color"
+      },
+      "brand": {
+        "$value": "{brand.navy}",
+        "$type": "color"
+      },
+      "brand-contrast": {
+        "$value": "{brand.white}",
+        "$type": "color"
+      },
+      "accent": {
+        "$value": "{brand.blue}",
+        "$type": "color"
+      },
+      "accent-contrast": {
+        "$value": "{brand.ink}",
+        "$type": "color"
+      },
+      "live": {
+        "$value": "{brand.red}",
+        "$type": "color"
+      },
+      "live-contrast": {
+        "$value": "{brand.white}",
+        "$type": "color"
+      },
+      "give": {
+        "$value": "{brand.gold}",
+        "$type": "color"
+      },
+      "give-contrast": {
+        "$value": "{brand.ink}",
+        "$type": "color"
+      },
+      "success": {
+        "$value": "{brand.green}",
+        "$type": "color"
+      },
+      "success-contrast": {
+        "$value": "{brand.ink}",
+        "$type": "color"
+      },
+      "focus": {
+        "$value": "{brand.red}",
+        "$type": "color"
+      },
+      "player-bg": {
+        "$value": "{brand.navy}",
+        "$type": "color"
+      },
+      "player-text": {
+        "$value": "{brand.white}",
+        "$type": "color"
+      },
+      "player-focus": {
+        "$value": "{brand.gold}",
+        "$type": "color"
+      }
+    },
+    "font": {
+      "family": {
+        "heading": {
+          "$value": "Barlow",
+          "$type": "fontFamilies"
+        },
+        "body": {
+          "$value": "Nunito Sans",
+          "$type": "fontFamilies"
+        },
+        "logo-wordmark": {
+          "$value": "Avenir Next Condensed",
+          "$type": "fontFamilies",
+          "$description": "Corporate logo only \u2014 use official logo files, do not re-typeset"
+        }
+      },
+      "weight": {
+        "body": {
+          "$value": "400",
+          "$type": "fontWeights"
+        },
+        "body-strong": {
+          "$value": "600",
+          "$type": "fontWeights"
+        },
+        "heading": {
+          "$value": "700",
+          "$type": "fontWeights"
+        },
+        "heading-heavy": {
+          "$value": "800",
+          "$type": "fontWeights"
+        }
+      },
+      "line-height": {
+        "body": {
+          "$value": "1.55",
+          "$type": "lineHeights"
+        },
+        "heading": {
+          "$value": "1.15",
+          "$type": "lineHeights"
+        }
+      }
+    },
+    "radius": {
+      "sm": {
+        "$value": "6",
+        "$type": "borderRadius"
+      },
+      "md": {
+        "$value": "12",
+        "$type": "borderRadius"
+      },
+      "lg": {
+        "$value": "20",
+        "$type": "borderRadius"
+      },
+      "pill": {
+        "$value": "999",
+        "$type": "borderRadius"
+      }
+    },
+    "space": {
+      "1": {
+        "$value": "4",
+        "$type": "spacing"
+      },
+      "2": {
+        "$value": "8",
+        "$type": "spacing"
+      },
+      "3": {
+        "$value": "12",
+        "$type": "spacing"
+      },
+      "4": {
+        "$value": "16",
+        "$type": "spacing"
+      },
+      "5": {
+        "$value": "24",
+        "$type": "spacing"
+      },
+      "6": {
+        "$value": "40",
+        "$type": "spacing"
+      }
+    },
+    "size": {
+      "header-h": {
+        "$value": "64",
+        "$type": "sizing"
+      },
+      "player-h": {
+        "$value": "72",
+        "$type": "sizing"
+      },
+      "tap-target-min": {
+        "$value": "44",
+        "$type": "sizing",
+        "$description": "WCAG minimum touch target"
+      }
+    }
+  },
+  "type-phone": {
+    "font-size": {
+      "minus-1": {
+        "$value": "13",
+        "$type": "fontSizes"
+      },
+      "0": {
+        "$value": "16",
+        "$type": "fontSizes"
+      },
+      "1": {
+        "$value": "20",
+        "$type": "fontSizes"
+      },
+      "2": {
+        "$value": "26",
+        "$type": "fontSizes"
+      },
+      "3": {
+        "$value": "36",
+        "$type": "fontSizes"
+      },
+      "4": {
+        "$value": "52",
+        "$type": "fontSizes"
+      }
+    }
+  },
+  "type-desktop": {
+    "font-size": {
+      "minus-1": {
+        "$value": "14",
+        "$type": "fontSizes"
+      },
+      "0": {
+        "$value": "17",
+        "$type": "fontSizes"
+      },
+      "1": {
+        "$value": "24",
+        "$type": "fontSizes"
+      },
+      "2": {
+        "$value": "34",
+        "$type": "fontSizes"
+      },
+      "3": {
+        "$value": "52",
+        "$type": "fontSizes"
+      },
+      "4": {
+        "$value": "88",
+        "$type": "fontSizes"
+      }
+    }
+  }
+}
